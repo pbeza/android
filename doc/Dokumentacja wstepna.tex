@@ -1,0 +1,207 @@
+\documentclass[a4paper,titlepage]{article}
+\usepackage[OT4,plmath]{polski}
+%\usepackage[backend=biber]{biblatex}
+\usepackage[margin=1in]{geometry}
+\usepackage[noend]{algpseudocode}
+\usepackage[page]{appendix}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\usepackage{algorithm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{parskip}
+\usepackage{pifont}
+\usepackage{setspace}
+\usepackage{verbatimbox}
+\usepackage{wrapfig}
+
+\linespread{1.4}
+
+%\addbibresource{Dokumentacja wstepna.bib}
+
+\renewcommand*\appendixpagename{Załącznik}
+\renewcommand{\qedsymbol}{$\square$}
+\renewcommand{\algorithmiccomment}[1]{\hfill\textcolor{black!65}{\textit{#1}}}
+\let\emptyset\varnothing
+
+\makeatother
+\setlength{\parindent}{24pt}
+\theoremstyle{break}
+\newtheorem*{uwaga}{Uwaga}
+\newtheorem{definicja}{Definicja}[section]
+\newtheorem{ozn}{Oznaczenie}[section]
+
+\newcommand{\cmark}{\textcolor{ForestGreen}{\ding{51}}}
+\newcommand{\xmark}{\textcolor{Maroon}{\ding{55}}}
+
+%------------------------------------------------------------------------------
+
+\title{Dokumentacja projektu}
+\author{
+    \href{mailto:bezap@student.mini.pw.edu.pl}{Patryk~Bęza}\\[0.7em]
+    \href{mailto:plodczykm@student.mini.pw.edu.pl}{Mateusz~Płodczyk}\\[0.7em]
+}
+\date{\today}
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\ALG@name}{Algorytm}
+\begin{titlepage}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\center
+
+\includegraphics[width=2.0cm]{img/mini}\\[1.5cm]
+\textsc{\LARGE Politechnika Warszawska}\\[0.3cm]
+\textsc{\Large Wydział Matematyki i~Nauk Informacyjnych}\\[1.5cm]
+\textsc{\large Aplikacje mobilne: Android}\\[0.2cm]
+\textsc{\small Rok akademicki 2015/2016}\\[1.5cm]
+
+\HRule \\[1cm]
+{ \huge \bfseries \@title}\\[0.7cm]
+\HRule \\[1.75cm]
+
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft}\large
+\textsc{Autorzy:}\\[3mm]
+\@author
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright}\large
+\textsc{Wykładowca:}\\[3mm]
+\href{mailto:M.Luckner@mini.pw.edu.pl}{dr~inż.~Marcin~Luckner}\\[1cm]
+\textsc{Laborant:}\\[3mm]
+\href{mailto:A.Cislak@mini.pw.edu.pl}{mgr~inż.~Aleksander~Cisłak}\\[1cm]
+\end{flushright}
+\end{minipage}
+\vfill
+{\large \today}
+
+\end{titlepage}
+
+%\maketitle
+\tableofcontents
+\clearpage
+
+%------------------------------------------------------------------------------
+
+\begin{abstract}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.35\textwidth]{img/android-eat-apple}
+\end{figure}
+
+Niniejszy dokument powstał w~ramach dokumentacji projektu zespołowego z~przedmiotu \textit{Aplikacje mobilne: Android} w semestrze letnim roku akademickiego~2015/2016 na \emph{\href{http://www.mini.pw.edu.pl/}{Wydziale MiNI}~\href{https://www.pw.edu.pl/}{Politechniki Warszawskiej}}. Ma on za zadanie udokumentować ideę działania aplikacji mobilnej, sposób jej użycia, wykorzystane narzędzia i biblioteki oraz wyniki testów funkcjonalnych i wydajnościowych oraz wnioski.
+
+\end{abstract}
+
+\clearpage
+
+%------------------------------------------------------------------------------
+
+\section{Wstęp}
+\label{wstep}
+\noindent W tym rozdziale przedstawiono krótki opis idei działania tworzonej aplikacji mobilnej.
+
+\subsection{Cel aplikacji}
+
+W ramach projektu powstanie aplikacja mobilna na system \href{http://www.android.com/}{Android}, która będzie miała na celu... \emph{TODO}.
+
+%------------------------------------------------------------------------------
+
+\subsection{Idea działania aplikacji}
+
+Rozwinięcie celu aplikacji \emph{TODO}...
+
+%------------------------------------------------------------------------------
+
+\section{Aplikacja}
+
+Do stworzenia aplikacji mobinej na system \emph{\href{http://www.android.com/}{Android}} zostanie wykorzystane środowisko programistyczne bazujące na \emph{\href{https://www.jetbrains.com/idea/}{IntelliJ~IDEA}} czeskiej firmy \emph{\href{https://www.jetbrains.com/}{JetBrains}}, tzn.~\emph{\href{http://developer.android.com/tools/studio/index.html}{Android Studio}}, które jest aktualnie oficjalnym \emph{IDE} dla programowania aplikacji dla~\emph{Androida}.
+
+\subsection{Dane wejściowe}
+
+\emph{TODO}
+
+%------------------------------------------------------------------------------
+
+\subsection{Dane wyjściowe}
+
+\emph{TODO}
+
+%------------------------------------------------------------------------------
+
+\subsection{Instrukcja obsługi}
+
+\emph{TODO}
+
+%------------------------------------------------------------------------------
+
+\section{Testy}
+
+Ten rozdział opisuje wyniki przeprowadzonych testów funkcjonalnych i~wydajnościowych.
+
+\subsection{Dane testowe}
+
+\emph{TODO}
+
+%------------------------------------------------------------------------------
+
+\subsection{Wyniki testów}
+
+\emph{TODO}
+
+%------------------------------------------------------------------------------
+
+\newpage
+
+\begin{appendices}
+
+\section{Podział prac}
+\subsection{Podział pracy pisemnej}
+
+Poniższa tabela przestawia wykaz rozdziałów opracowanych przez poszczególnych członków zespołu.
+
+\begin{table}[H]
+\center
+\begin{tabular}{p{2.5cm}|p{5cm}|p{5cm}}
+& Patryk Bęza & Mateusz Płodczyk \\\hline\hline
+\parbox{3cm}{\ \\Opracowane \\rozdziały} & -- & --\\
+\end{tabular}
+\end{table}
+
+\subsection{Podział implementacji}
+
+Poniższa tabela przestawia podział prac implementacyjnych w ramach projektu.
+
+\begin{table}[H]
+\center
+\begin{tabular}{p{2.5cm}|p{5cm}|p{5cm}}
+& Patryk Bęza & Mateusz Płodczyk \\\hline\hline
+\multirow{3}{*}{\parbox{3cm}{\ \\Opracowane \\funkcjonalności}} & $\bullet$ Bla & $\bullet$ Bla\\
+& $\bullet$ A & $\bullet$ B \\
+& $\bullet$ C & $\bullet$ D
+\end{tabular}
+\end{table}
+
+\end{appendices}
+
+%------------------------------------------------------------------------------
+
+%\clearpage
+%\printbibliography[title=Bibliografia]
+
+\end{document}
