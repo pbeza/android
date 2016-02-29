@@ -1,4 +1,4 @@
-NAME         = 'Dokumentacja wstepna'
+NAME         = 'Dokumentacja'
 PDF_FILENAME = $(NAME).pdf
 TEX_FILENAME = $(NAME).tex
 AUX_FILENAME = $(NAME).aux
