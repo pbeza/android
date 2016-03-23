@@ -5,7 +5,7 @@
 Do wymyślenia.
 
 Przydatne strony z pomysłami na aplikacje:
-- [google.com](https://www.google.pl/search?q=apps+ideas)
+- [google.com/search?q=apps+ideas](https://www.google.pl/search?q=apps+ideas)
 - [preapps.com](http://www.preapps.com/app-ideas)
 - [myapptemplates.com](http://myapptemplates.com/99-iphone-app-ideas-that-could-make-you-rich-the-full-list/)
 - [ideaswatch.com](http://www.ideaswatch.com/startup-ideas/app)
@@ -33,4 +33,4 @@ Tutoriale [Androida](https://en.wikipedia.org/wiki/Android_(operating_system)):
 - [tutorialspoint.com/android](http://www.tutorialspoint.com/android/)
 
 Inne:
-- [Jak zmniejszyć rozmiar PDF wygenerowanego pdflatex'em?](jak zmniejszyć rozmiar PDF wygenerowanego pdflatex'em?)
+- [Jak zmniejszyć rozmiar PDF wygenerowanego pdflatex'em?](http://tex.stackexchange.com/questions/18987/how-to-make-the-pdfs-produced-by-pdflatex-smaller)
