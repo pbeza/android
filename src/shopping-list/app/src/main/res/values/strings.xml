@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Shopping List</string>
+    <string name="add_item_title">Add</string>
+    <string name="settings_name">Settings</string>
+    <string name="save">Save</string>
+    <string name="item_name">Name</string>
+    <string name="item_name_value">What to buy?</string>
+    <string name="items_number">Number</string>
+    <string name="items_number_value">How much / many to buy?</string>
+    <string name="details_toolbar_title">Details</string>
+</resources>
