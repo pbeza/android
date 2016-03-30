@@ -35,11 +35,9 @@ public class MainActivity extends AppCompatActivity {
         // Fetch all items from database and display
 
         this.shoppingItemsDb = new DBHelper(this);
-        ArrayList<String> allShoppingItems = this.shoppingItemsDb.getAllShoppingItems();
-        ArrayAdapter<String> arrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allShoppingItems);
         this.shoppingItemsListView = (ListView) findViewById(R.id.shopping_listview);
-        this.shoppingItemsListView.setAdapter(arrAdapter);
         this.shoppingItemsListView.setOnItemClickListener(new OnShoppingItemClickListener());
+        refreshAllShoppingItemsListView();
 
         Log.d(logTag, "MainActivity.onCreate() event");
     }
@@ -47,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -67,8 +65,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(logTag, "action_settings");
                 return true;
             default:
-                Log.d(logTag, "other menu item");
+                Log.d(logTag, "other main_menu item");
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == ADD_ITEM_REQUEST) {
+            printResultCodeStatus(resultCode, "adding item");
+            refreshAllShoppingItemsListView();
+        } else if (requestCode == SHOW_ITEM_DETAILS_REQUEST) {
+            printResultCodeStatus(resultCode, "showing item's details");
+            refreshAllShoppingItemsListView();
+        } else {
+            Log.d(logTag, "Unrecognized request code in onActivityResult()");
         }
     }
 
@@ -102,16 +114,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(logTag, "MainActivity.onDestroy() event");
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == ADD_ITEM_REQUEST) {
-            printResultCodeStatus(resultCode, "adding item");
-        } else if (requestCode == SHOW_ITEM_DETAILS_REQUEST) {
-            printResultCodeStatus(resultCode, "showing item's details");
-        } else {
-            Log.d(logTag, "Unrecognized request code in onActivityResult()");
-        }
+    private void refreshAllShoppingItemsListView() {
+        ArrayList<ShoppingItem> allShoppingItems = this.shoppingItemsDb.getAllShoppingItems();
+        ArrayAdapter<ShoppingItem> arrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allShoppingItems);
+        this.shoppingItemsListView.setAdapter(arrAdapter);
     }
 
     private void printResultCodeStatus(int resultCode, String logMsg) {
@@ -127,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            int cid = position + 1;
+            ShoppingItem item = (ShoppingItem) parent.getItemAtPosition(position);
+            int cid = item.getId();
             Bundle dataBundle = new Bundle();
             dataBundle.putInt(DBHelper.SHOPPING_ITEM_ID_COLUMN_NAME, cid);
             Intent intent = new Intent(getApplicationContext(), DisplayShoppingItemActivity.class);

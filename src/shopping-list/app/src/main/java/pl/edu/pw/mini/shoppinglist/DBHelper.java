@@ -78,13 +78,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return (int) DatabaseUtils.queryNumEntries(db, SHOPPIG_LIST_TABLE_NAME);
     }
 
-    public ArrayList<String> getAllShoppingItems() {
-        ArrayList<String> arr = new ArrayList<String>();
+    public ArrayList<ShoppingItem> getAllShoppingItems() {
+        ArrayList<ShoppingItem> arr = new ArrayList<ShoppingItem>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + SHOPPIG_LIST_TABLE_NAME, null);
         res.moveToFirst();
         while (!res.isAfterLast()) {
-            arr.add(res.getString(res.getColumnIndex(SHOPPIG_ITEM_NAME_COLUMN_NAME)));
+            String itemName = res.getString(res.getColumnIndex(SHOPPIG_ITEM_NAME_COLUMN_NAME));
+            int number = res.getInt(res.getColumnIndex(SHOPPING_ITEM_NUMBER_COLUMN_NAME));
+            int id = res.getInt(res.getColumnIndex(SHOPPING_ITEM_ID_COLUMN_NAME));
+            arr.add(new ShoppingItem(id, itemName, number));
             res.moveToNext();
         }
         return arr;
