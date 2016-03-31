@@ -2,18 +2,20 @@ package pl.edu.pw.mini.shoppinglist;
 
 public class ShoppingItem {
 
-    private int id, number;
-    private String name;
+    private static String itemsPostfix;
+    private final int id, number;
+    private final String name;
 
-    public ShoppingItem(int id, String name, int number) {
+    public ShoppingItem(int id, String name, int number, String itemsPostfix) {
         this.id = id;
         this.name = name;
         this.number = number;
+        ShoppingItem.itemsPostfix = itemsPostfix;
     }
 
     @Override
     public String toString() {
-        return name + " (" + number + " szt.)";
+        return name + " (" + number + " " + itemsPostfix + ")";
     }
 
     public int getId() {

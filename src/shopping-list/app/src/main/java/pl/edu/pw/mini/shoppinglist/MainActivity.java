@@ -1,7 +1,9 @@
 package pl.edu.pw.mini.shoppinglist;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,12 +14,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final static String logTag = "Shopping List App : ";
+    private final static String LOG_TAG = "Shopping List App : ";
     private final static int ADD_ITEM_REQUEST = 1, SHOW_ITEM_DETAILS_REQUEST = 2;
     private ListView shoppingItemsListView;
     private DBHelper shoppingItemsDb;
@@ -37,9 +40,10 @@ public class MainActivity extends AppCompatActivity {
         this.shoppingItemsDb = new DBHelper(this);
         this.shoppingItemsListView = (ListView) findViewById(R.id.shopping_listview);
         this.shoppingItemsListView.setOnItemClickListener(new OnShoppingItemClickListener());
-        refreshAllShoppingItemsListView();
+        int itemsNumber = refreshAllShoppingItemsListView();
+        setShoppingListTitle(itemsNumber);
 
-        Log.d(logTag, "MainActivity.onCreate() event");
+        Log.d(LOG_TAG, "MainActivity.onCreate() event");
     }
 
     @Override
@@ -53,80 +57,118 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-            case R.id.add_item:
-                Log.d(logTag, "add_item");
-                Bundle b = new Bundle();
-                b.putInt(DBHelper.SHOPPING_ITEM_ID_COLUMN_NAME, 0);
-                Intent intent = new Intent(getApplicationContext(), DisplayShoppingItemActivity.class);
-                intent.putExtras(b);
-                startActivityForResult(intent, ADD_ITEM_REQUEST);
+            case R.id.add_item_id:
+                addNewItem();
                 return true;
-            case R.id.action_settings:
-                Log.d(logTag, "action_settings");
+            case R.id.remove_all_settings_item_id:
+                removeAllItems();
                 return true;
             default:
-                Log.d(logTag, "other main_menu item");
+                Log.d(LOG_TAG, "Unrecognized main_menu item");
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void addNewItem() {
+        Bundle b = new Bundle();
+        b.putInt(DBHelper.SHOPPING_ITEM_ID_COLUMN_NAME, 0);
+        Intent intent = new Intent(getApplicationContext(), DisplayShoppingItemActivity.class);
+        intent.putExtras(b);
+        startActivityForResult(intent, ADD_ITEM_REQUEST);
+    }
+
+    private void removeAllItems() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_all_items_question)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        shoppingItemsDb.recreateDatabase(shoppingItemsDb.getWritableDatabase());
+                        refreshAllShoppingItemsListView();
+                        setShoppingListTitle(0);
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+        AlertDialog d = builder.create();
+        d.setTitle(R.string.delete_all_items_question_title);
+        d.show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        int itemsNumber;
+
         if (requestCode == ADD_ITEM_REQUEST) {
             printResultCodeStatus(resultCode, "adding item");
-            refreshAllShoppingItemsListView();
         } else if (requestCode == SHOW_ITEM_DETAILS_REQUEST) {
             printResultCodeStatus(resultCode, "showing item's details");
-            refreshAllShoppingItemsListView();
+            // Note: it's possible that item has been removed in details view
         } else {
-            Log.d(logTag, "Unrecognized request code in onActivityResult()");
+            Log.d(LOG_TAG, "Unrecognized request code in onActivityResult()");
+            return;
+        }
+        itemsNumber = refreshAllShoppingItemsListView();
+        setShoppingListTitle(itemsNumber);
+    }
+
+    private void setShoppingListTitle(int itemsNumber) {
+        TextView t = (TextView) findViewById(R.id.shopping_list_title_id);
+        String title;
+        if (itemsNumber == 0) {
+            title = getString(R.string.shopping_list_is_empty_title);
+        } else {
+            title = String.format(getString(R.string.shopping_list_not_empty_title), itemsNumber);
+        }
+        t.setText(title);
+    }
+
+    private int refreshAllShoppingItemsListView() {
+        ArrayList<ShoppingItem> allShoppingItems = this.shoppingItemsDb.getAllShoppingItems(getString(R.string.items));
+        ArrayAdapter<ShoppingItem> arrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allShoppingItems);
+        this.shoppingItemsListView.setAdapter(arrAdapter);
+        return allShoppingItems.size();
+    }
+
+    private void printResultCodeStatus(int resultCode, String logMsg) {
+
+        if (resultCode == RESULT_OK) {
+            Log.d(LOG_TAG, "Successfully returned from " + logMsg);
+        } else {
+            Log.d(LOG_TAG, "Returned from " + logMsg + " ended with cancel or failure status");
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(logTag, "MainActivity.onStart() event");
+        Log.d(LOG_TAG, getLocalClassName() + ".onStart() event");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(logTag, "MainActivity.onResume() event");
+        Log.d(LOG_TAG, getLocalClassName() + ".onResume() event");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(logTag, "MainActivity.onPause() event");
+        Log.d(LOG_TAG, getLocalClassName() + ".onPause() event");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(logTag, "MainActivity.onStop() event");
+        Log.d(LOG_TAG, getLocalClassName() + ".onStop() event");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(logTag, "MainActivity.onDestroy() event");
-    }
-
-    private void refreshAllShoppingItemsListView() {
-        ArrayList<ShoppingItem> allShoppingItems = this.shoppingItemsDb.getAllShoppingItems();
-        ArrayAdapter<ShoppingItem> arrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allShoppingItems);
-        this.shoppingItemsListView.setAdapter(arrAdapter);
-    }
-
-    private void printResultCodeStatus(int resultCode, String logMsg) {
-
-        if (resultCode == RESULT_OK) {
-            Log.d(logTag, "Successfully returned from " + logMsg);
-        } else {
-            Log.d(logTag, "Returned from " + logMsg + " ended with cancel or failure status");
-        }
+        Log.d(LOG_TAG, getLocalClassName() + ".onDestroy() event");
     }
 
     private class OnShoppingItemClickListener implements AdapterView.OnItemClickListener {

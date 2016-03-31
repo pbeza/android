@@ -16,17 +16,17 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <TextView
-        android:id="@+id/hello_world_textview"
+        android:id="@+id/shopping_list_title_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/menu_toolbar"
-        android:text="Your shopping list" />
+        android:text="@string/your_shopping_list_title" />
 
     <ListView
         android:id="@+id/shopping_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/hello_world_textview"
+        android:layout_below="@id/shopping_list_title_id"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 </RelativeLayout>

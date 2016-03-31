@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Shopping List</string>
     <string name="add_item_title">Add</string>
-    <string name="settings_name">Settings</string>
+    <string name="remove_all_item_title">Clear</string>
     <string name="save">Save</string>
     <string name="item_name">Name</string>
     <string name="item_name_value">What to buy?</string>
@@ -10,7 +11,7 @@
     <string name="details_toolbar_title">Details</string>
     <string name="edit_item_title">Edit</string>
     <string name="remove_item_title">Remove</string>
-    <string name="deleteItemQuestion">Are you sure?</string>
+    <string name="remove_item_question">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="remove_question_title">Tricky question</string>
@@ -18,4 +19,12 @@
     <string name="specify_item_number_warning">Specify items\' number</string>
     <string name="deleted_successfully_msg">Deleted successfully</string>
     <string name="specify_at_least_one_warning">Specify value greater than 0</string>
+    <string name="delete_all_items_question">Do you want to permanently remove all items?</string>
+    <string name="delete_all_items_question_title">Are you sure?</string>
+    <string name="items">items</string>
+    <string name="your_shopping_list_title">Your shopping list:</string>
+    <string name="shopping_list_is_empty_title">Your shopping list is empty</string>
+    <string name="shopping_list_not_empty_title">Your list has %1$d item(s):</string>
+    <string name="successfully_saved">Successfully saved!</string>
+    <string name="successfully_updated">Successfully updated!</string>
 </resources>

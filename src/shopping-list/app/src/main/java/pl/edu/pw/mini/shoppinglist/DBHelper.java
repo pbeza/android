@@ -18,15 +18,15 @@ public class DBHelper extends SQLiteOpenHelper {
             SHOPPIG_LIST_TABLE_NAME = "shopping_list",
             SHOPPIG_ITEM_NAME_COLUMN_NAME = "name",
             SHOPPING_ITEM_NUMBER_COLUMN_NAME = "number";
-    public static final String
+    private static final String
             SHOPPIG_ITEM_ID_SCHEMA = SHOPPING_ITEM_ID_COLUMN_NAME + " INTEGER PRIMARY KEY AUTOINCREMENT",
             SHOPPIG_ITEM_COLUMN_NAME_SCHEMA = SHOPPIG_ITEM_NAME_COLUMN_NAME + " TEXT",
             SHOPPING_ITEM_NUMBER_SCHEMA = SHOPPING_ITEM_NUMBER_COLUMN_NAME + " INTEGER";
-    public static final String
+    private static final String
             COLUMNS_SCHEMA = TextUtils.join(",", new String[]{SHOPPIG_ITEM_ID_SCHEMA, SHOPPIG_ITEM_COLUMN_NAME_SCHEMA, SHOPPING_ITEM_NUMBER_SCHEMA}),
             CREATE_SHOPPIG_LIST_TABLE_QUERY = "CREATE TABLE " + SHOPPIG_LIST_TABLE_NAME + "(" + COLUMNS_SCHEMA + ")",
             DROP_SHOPPIG_LIST_TABLE_QUERY = "DROP TABLE IF EXISTS " + SHOPPIG_LIST_TABLE_NAME;
-    public static final int DEFAULT_ITEMS_NUMBER = 0;
+    private static final int DEFAULT_ITEMS_NUMBER = 0;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -39,6 +39,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        recreateDatabase(db);
+    }
+
+    public void recreateDatabase(SQLiteDatabase db) {
         db.execSQL(DROP_SHOPPIG_LIST_TABLE_QUERY);
         onCreate(db);
     }
@@ -78,8 +82,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return (int) DatabaseUtils.queryNumEntries(db, SHOPPIG_LIST_TABLE_NAME);
     }
 
-    public ArrayList<ShoppingItem> getAllShoppingItems() {
-        ArrayList<ShoppingItem> arr = new ArrayList<ShoppingItem>();
+    public ArrayList<ShoppingItem> getAllShoppingItems(String itemsPostfix) {
+        ArrayList<ShoppingItem> arr = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + SHOPPIG_LIST_TABLE_NAME, null);
         res.moveToFirst();
@@ -87,9 +91,10 @@ public class DBHelper extends SQLiteOpenHelper {
             String itemName = res.getString(res.getColumnIndex(SHOPPIG_ITEM_NAME_COLUMN_NAME));
             int number = res.getInt(res.getColumnIndex(SHOPPING_ITEM_NUMBER_COLUMN_NAME));
             int id = res.getInt(res.getColumnIndex(SHOPPING_ITEM_ID_COLUMN_NAME));
-            arr.add(new ShoppingItem(id, itemName, number));
+            arr.add(new ShoppingItem(id, itemName, number, itemsPostfix));
             res.moveToNext();
         }
+        res.close();
         return arr;
     }
 }

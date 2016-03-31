@@ -79,9 +79,9 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
             }
             Button b = (Button) findViewById(R.id.save_button);
             b.setVisibility(View.INVISIBLE);
-            shoppingItemNameEditText.setText(name);
-            shoppingItemsNumberEditText.setText(Integer.toString(number));
             setFormEditable(false);
+            shoppingItemNameEditText.setText(name);
+            shoppingItemsNumberEditText.setText(String.format("%1$d", number));
         }
     }
 
@@ -89,10 +89,12 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
         shoppingItemNameEditText.setFocusable(editable);
         shoppingItemNameEditText.setClickable(editable);
         shoppingItemNameEditText.setFocusableInTouchMode(editable);
+        shoppingItemNameEditText.setLongClickable(editable);
 
         shoppingItemsNumberEditText.setFocusable(editable);
         shoppingItemsNumberEditText.setClickable(editable);
         shoppingItemsNumberEditText.setFocusableInTouchMode(editable);
+        shoppingItemsNumberEditText.setLongClickable(editable);
     }
 
     @Override
@@ -101,8 +103,11 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
         inflater.inflate(R.menu.item_details_menu, menu);
 
         if (itemId == 0) { // new item mode
-            MenuItem item = menu.findItem(R.id.remove_item);
-            item.setVisible(false);
+            MenuItem removeItem = menu.findItem(R.id.remove_item);
+            removeItem.setVisible(false);
+
+            MenuItem editItem = menu.findItem(R.id.edit_item);
+            editItem.setVisible(false);
         }
 
         return true;
@@ -113,26 +118,20 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.remove_item:
-                Log.d(LOG_TAG, "remove_item");
                 removeItem();
                 return true;
             case R.id.edit_item:
-                Log.d(LOG_TAG, "edit_item");
-                setFormEditable(true);
-                shoppingItemsNumberEditText.setEnabled(true);
-                shoppingItemNameEditText.setEnabled(true);
-                Button b = (Button) findViewById(R.id.save_button);
-                b.setVisibility(View.VISIBLE);
+                editItem();
                 return true;
             default:
-                Log.d(LOG_TAG, "other item_details_menu item");
+                Log.d(LOG_TAG, "Unrecognized item_details_menu item");
                 return super.onOptionsItemSelected(item);
         }
     }
 
     private void removeItem() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.deleteItemQuestion)
+        builder.setMessage(R.string.remove_item_question)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         shoppingItemsDb.deleteShoppingItem(itemId);
@@ -143,12 +142,19 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
                     }
                 });
         AlertDialog d = builder.create();
         d.setTitle(R.string.remove_question_title);
         d.show();
+    }
+
+    private void editItem() {
+        setFormEditable(true);
+        shoppingItemsNumberEditText.setEnabled(true);
+        shoppingItemNameEditText.setEnabled(true);
+        Button b = (Button) findViewById(R.id.save_button);
+        b.setVisibility(View.VISIBLE);
     }
 
     public void saveItem(View view) {
@@ -163,17 +169,47 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
             return;
         }
         int itemsNumber = Integer.parseInt(itemsNumberString);
-        String toastMsg = "Successfully ";
+        String toastMsg;
         if (itemId > 0) {
             shoppingItemsDb.updateShoppingItem(itemId, itemName, itemsNumber);
-            toastMsg += "updated!";
+            toastMsg = getString(R.string.successfully_updated);
         } else {
             shoppingItemsDb.insertShoppingItem(itemName, itemsNumber);
-            toastMsg += "saved!";
+            toastMsg = getString(R.string.successfully_saved);
         }
         Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_SHORT).show();
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, getLocalClassName() + ".onStart() event");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, getLocalClassName() + ".onResume() event");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, getLocalClassName() + ".onPause() event");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, getLocalClassName() + ".onStop() event");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, getLocalClassName() + ".onDestroy() event");
     }
 
     public abstract class TextValidator implements TextWatcher {
@@ -187,9 +223,11 @@ public class DisplayShoppingItemActivity extends AppCompatActivity {
         }
 
         @Override
-        final public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Don't care */ }
+        final public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
-        final public void onTextChanged(CharSequence s, int start, int before, int count) { /* Don't care */ }
+        final public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
     }
 }

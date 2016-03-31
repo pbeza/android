@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lista zakupów</string>
+    <string name="add_item_title">Dodaj</string>
+    <string name="remove_all_item_title">Wyczyść</string>
+    <string name="save">Zapisz</string>
+    <string name="item_name">Nazwa produktu</string>
+    <string name="item_name_value">Tu wpisz co chcesz kupić?</string>
+    <string name="items_number">Liczba produktów</string>
+    <string name="items_number_value">Ile sztuk?</string>
+    <string name="details_toolbar_title">Szczegóły</string>
+    <string name="edit_item_title">Edytuj</string>
+    <string name="remove_item_title">Usuń</string>
+    <string name="remove_item_question">Na pewno chcesz usunąć ten produkt?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="remove_question_title">Podchwytliwe pytanie</string>
+    <string name="specify_item_name_warning">Wpisz nazwę produktu</string>
+    <string name="specify_item_number_warning">Wpisz liczbę produktów</string>
+    <string name="deleted_successfully_msg">Usunięto</string>
+    <string name="specify_at_least_one_warning">Liczba protuktów nie może być mniejsza niż 1</string>
+    <string name="delete_all_items_question">Czy na pewno usunąć całą listę zakupów?</string>
+    <string name="delete_all_items_question_title">Na pewno?</string>
+    <string name="items">szt.</string>
+    <string name="your_shopping_list_title">Twoja lista zakupów</string>
+    <string name="shopping_list_is_empty_title">Twoja lista zakupów jest pusta</string>
+    <string name="shopping_list_not_empty_title">Twoja lista ma %1$d produkt(y/ów):</string>
+    <string name="successfully_saved">Zapisano</string>
+    <string name="successfully_updated">Zaktualizowano</string>
+</resources>
