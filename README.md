@@ -18,9 +18,23 @@ Przydatne strony z pomysłami na aplikacje:
 1. Nie wrzucamy do *mastera* niedziałającego kodu.
 1. Zgodnie z [udziałem](http://developer.android.com/about/dashboards/index.html) wersji Androida w rynku, niech `android:minSdkVersion=16`, a `android:targetSdkVersion=22`, chyba, że z jakiś powodów będzie wygodniej olać starsze wersje.
 
+### Dokumentacja ###
+
+Końcowy raport powinien zawierać informacje dotyczące:
+- wykorzystanych narzędzi (środowisko, biblioteki itp., w szczególności nietypowe rozwiązania),
+- podział pracy (bardzo istotna część raportu),
+- krótki opis aplikacji (bez screenów),
+- motywację oraz potencjał komercyjny aplikacji (max. 5 stron).
+
+**Raport musi być napisany w Latexu** (*inny nie zostanie przyjęty*; proszę zapoznać się z tym środowiskiem we własnym zakresie). 
+
 ### Deadline'y ###
 
-Jeszcze nieustalone.
+Data | Wymagania
+---|---
+11.03.2016 | **Wymagania dotyczące aplikacji "To do"**: dodawanie nowych elementów (bez ograniczeń w kwestii liczby tych elementów), edycja oraz usuwanie istniejących elementów. Dane powinny być zapisywane na dysku (w dowolny sposób), aby możliwe było ich odczytanie po ponownym uruchomieniu aplikacji.
+01.04.2016 (piątek) | **Termin na oddanie aplikacji "To do".** Do tego czasu należy też określić przynależność do grup projektowych. Z powodu planu poniedziałkowego w czwartek 31.03, grupa czwartkowa ma czas do czwartku 07.04.
+15.04.2016 (piątek) | **Termin na oddanie prototypu.** Prototyp nie musi posiadać całej funkcjonalności, np. jeżeli planujecie Państwo zaimplementować komunikację z serwerem, a serwer nie został jeszcze napisany, można wtedy zasymulować przekazywanie danych (w podobny sposób jak przy unit testach).
 
 ### WWW ###
 
