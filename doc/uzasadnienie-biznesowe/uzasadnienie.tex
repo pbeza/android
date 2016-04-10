@@ -5,19 +5,14 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
-%\usepackage[hyphenbreaks]{breakurl}
-%\usepackage[hyphens]{url}
 \usepackage{indentfirst}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{parskip}
 \usepackage{url}
 \usepackage{fancyvrb}
-%\usepackage[fixlanguage]{babelbib}
-%\selectbiblanguage{polish}
-%\setlength{\parindent}{24pt}
-\linespread{1.16}
 
+\linespread{1.12}
 \frenchspacing
 
 %------------------------------------------------------------------------------
@@ -69,24 +64,24 @@ W ramach niniejszego projektu będzie nas interesowało jeszcze inne, specjalizo
 
 \section{Uzasadnienie biznesowe}
 
-Wielu ludzi lubi spędzać wolny czas jeżdżąc na rowerze. Szczególnie sprzyjającą porą roku jest lato, w szczególności okres letnich wakacji. Większość rowerzystów jeździ na rowerze rekreacyjnie, bez dużej części wyposażenia, którą mają do dyspozycji kolarze jeżdżący w peletonach, mimo, że część rozwiązań byłaby pomocna również amatorom. Zróbmy więc bardzo krótki przegląd nietypowych dla amatora rozwiązań, stosowanych przez zawodowców.
+Wielu ludzi lubi spędzać wolny czas jeżdżąc na rowerze. Szczególnie sprzyjającą porą roku jest lato, w szczególności okres letnich wakacji. Większość rowerzystów jeździ na rowerze rekreacyjnie, bez dużej części wyposażenia, którą mają do dyspozycji kolarze, biorący udział w peletonach, mimo, że część rozwiązań, byłaby pomocna również amatorom. Zróbmy więc bardzo krótki przegląd nietypowych dla amatora rozwiązań, często stosowanych przez zawodowców.
 
 %------------------------------------------------------------------------------
 
 \subsection{Okiem zawodowców}
 
-Zawodowa jazda na rowerze wymaga od kolarza coraz bardziej wyrafinowanego wyposażenia, nieznanego rowerowym amatorom, np.:
+Zawodowa jazda na rowerze wymaga od kolarza coraz bardziej wyrafinowanego wyposażenia, często nieznanego rowerowym amatorom, np.:
 \begin{itemize}
-\item zadbanie o idealną sprawność ultralekkiego roweru, najczęściej z włókna węglowego,
-\item zaopatrzenie się w bardzo lekkie, wodoodporne bezprzewodowo sterowane przerzutki~\cite{www:campagnolo-shifts}\cite{www:campagnolo-shifts-video},
+\item zadbanie o idealną sprawność ultralekkiego roweru, wykonanego najczęściej z włókna węglowego,
+\item zaopatrzenie się w bardzo lekkie, wodoodporne, bezprzewodowo sterowane przerzutki i inne elementy roweru~\cite{www:campagnolo-shifts}\cite{www:campagnolo-shifts-video},
 \item zaopatrzenie się w elektroniczny moduł czuwający nad nieprawidłowym działaniem podzespołów roweru, zapisujący bezprzewodowo parametry jazdy np. na telefonie~\cite{www:campagnolo-computer}\cite{www:campagnolo-computer-video}\cite{www:campagnolo-computer-adjustment-video},
 \item bezprzewodowe, douszne połączenie głosowe z zespołem, który często jedzie kilkaset metrów za kolarzem i informuje go o aktualnym tempie i położeniu peletonu,
-\item aereodynamiczny kształt niemal wszystkich elementów wyposażenia zarówno kolarza jak i roweru -- coraz częściej testowanych w tunelach aerodynamicznych,
-\item i wiele innych.
+\item aerodynamiczny kształt niemal wszystkich elementów wyposażenia zarówno kolarza jak i roweru -- coraz częściej testowanych w tunelach aerodynamicznych,
+\item wiele innych.
 \end{itemize}
-Cena jaką przyszłoby nam zapłacić za zawodowy rower jednego kolarza startującego w \emph{Tour de France}, to wydatek porównywalny z wydatkiem na średniej klasy samochodu. Ceny za takie rowery siągają nawet~16000\textsterling~\cite{www:racing-bikes}\cite{www:tdf-bike}.
+Cena jaką przyszłoby nam zapłacić za zawodowy rower jednego kolarza startującego w \emph{Tour de France}, to wydatek porównywalny z wydatkiem na średniej klasy samochód. Ceny za takie rowery sięgają nawet~16000\textsterling~\cite{www:racing-bikes}\cite{www:tdf-bike}.
 
-Na szczęście jedną z ww. funkcjonalności możemy zrealizować dużo taniej\footnote{Właściwie za darmo jeśli mamy słuchawki i telefon z \emph{Androidem} i przeliczajamy naszego czasu spędzonego na programowaniu, na pieniądze.}, z wykorzystaniem smartfonu wyposażonego w system~\emph{Android} -- tą funkcjonalnością jest intercom.
+Na szczęście jedną z ww. funkcjonalności możemy zrealizować dużo taniej\footnote{Właściwie za darmo jeśli mamy słuchawki, telefon z \emph{Androidem} i nie przeliczamy naszego czasu, spędzonego na programowaniu, na pieniądze.}, z wykorzystaniem smartfonu wyposażonego w system~\emph{Android} -- tą funkcjonalnością jest intercom.
 
 Na rynku istnieją profesjonalne rozwiązania intercomów zarówno dla motocyklistów jak i rowerzystów, niestety są stosunkowo drogie. Ich ceny oscylują między 150\$, a 700\$ w zależności od funkcjonalności i tego czy są zintegrowane z kaskiem czy nie~\cite{www:bike-intercom}\cite{www:bike-intercom-mce}. Co ciekawe, w Polsce nie ma łatwo dostępnego tak specjalizowanego dedykowanego wyposażenia rowerowego jak intercom.
 
@@ -102,13 +97,13 @@ Rozwiązaniem tego problemu jest intercom. Każda z osób, która chciałaby bra
 
 \subsection{Istniejące rozwiązania}
 
-Po sprawdzeniu \emph{Androidowego} sklepu \emph{Google Play}, okaże się, że istnieje co najmniej kilka aplikacji, które mają w nazwie słowo \emph{intercom}, jednak po dłuższym rozeznaniu okazuje się, że żaden z nich nie korzysta komunikacji \emph{peer2peer} przez \emph{WiFi}, którą umożliwiają telefony z \emph{Androidem} w wersji co najmniej~\emph{4.4}~\cite{www:android-wifi-p2p}\cite{www:android-wifi-p2p-tutorial}.
+Po sprawdzeniu \emph{Androidowego} sklepu \href{https://play.google.com/store}{\emph{Google Play}}, okaże się, że istnieje co najmniej kilka aplikacji, które mają w nazwie słowo \emph{intercom}, jednak po dłuższym rozeznaniu, okazuje się, że żadna z nich nie korzysta komunikacji \emph{peer2peer} przez \emph{WiFi}, którą umożliwiają telefony z \emph{Androidem} w wersji co najmniej~\emph{4.4}~\cite{www:android-wifi-p2p}\cite{www:android-wifi-p2p-tutorial}.
 
-Większość z ,,intercomowych" aplikacji ma bardzo niewielu użytkowników, a ich wygląd i \emph{user experience}~(UX) ma bardzo wiele do życzenia, również przez to, że aplikacje te były pisane na stosunkowo stare wersje \emph{Androida}, co potwierdzają negatywne komentarze użytkowników~\cite{www:existing-android-intercoms}.
+Większość z ,,intercomowych" aplikacji ma bardzo niewielu użytkowników, a ich wygląd i \emph{user experience~(UX)} ma bardzo wiele do życzenia, również przez to, że aplikacje te były pisane na stosunkowo stare wersje \emph{Androida}. Tę opinię potwierdzają negatywne komentarze użytkowników~\cite{www:existing-android-intercoms}.
 
-Ponadto żadna z tych aplikacji nie jest dedykowana rowerzystom~\cite{www:best-existing-android-intercom}. Co prawda, faktycznie nie ma powodu, aby klasycznie rozumiany intercom dedykować wyłącznie rowerzystom, lecz łatwo wyobrazić sobie, że aplikacja z intercomem dla rowerzysy, może być cena również dzięki dodatkowym funkcjonalnościom, takim jak zapisywanie pokonanej trasy dzięki systemowi~\emph{GPS}, wbudowanemu w niemal wszystkie dzisiejsze smartfony. Taką trasą możnaby dzielić się z~\emph{Endomondo}\footnote{Pod warunkiem, że \emph{Endomondo} udostępni kiedyś część publiczną swojego API -- w dniu pisania tego dokumentu takie API nie było dostępne.}, \emph{Facebookiem}, \emph{Twitterem}~itp.
+Ponadto żadna z tych aplikacji nie jest dedykowana rowerzystom~\cite{www:best-existing-android-intercom}. Co prawda, faktycznie nie ma powodu, aby klasycznie rozumiany intercom dedykować wyłącznie rowerzystom, lecz łatwo sobie wyobrazić, że aplikacja z intercomem dla rowerzysty, może być cenna również dzięki dodatkowym funkcjonalnościom, takim jak zapisywanie pokonanej trasy dzięki systemowi~\emph{GPS}, wbudowanemu w niemal wszystkie dzisiejsze smartfony. Taką trasą można by dzielić się z~\emph{Endomondo}\footnote{Pod warunkiem, że \emph{Endomondo} udostępni kiedyś część publiczną swojego API -- w dniu pisania tego dokumentu takie API nie było dostępne.}, \emph{Facebookiem}, \emph{Twitterem}~itp. Z aplikacji mogliby korzystać również ludzie, którzy uprawiają inny sport\footnote{Np. wspólne: bieganie, żeglowanie, jazda na (łyżwo)rolkach, desce, hulajnodze itp.}, albo nawet nie uprawiają sportu, ale potrzebują funkcjonalności intercomu.
 
-Ci którzy twierdzą, że równie dobrze mogą prowadzić rozmowę przez sieć GSM, ponieważ mają darmowe rozmowy, muszą pamiętać, że wyjeżdżając za granice Polski, muszą się liczyć z opłatami~\emph{roamingowymi}. Poza tym nie mogą oni prowadzić w ten sposób rozmów z wieloma osobami naraz oraz narażają swoje rozmowy na podsłuchanie służbom oddalonym o setki kilometrów, co nie jest możliwe przy korzystaniu lokalnie z~\emph{WiFi}.
+Ci którzy twierdzą, że zamiast korzystania z intercomu, równie dobrze mogą prowadzić rozmowę przez sieć GSM, ponieważ np. mają darmowe rozmowy, muszą pamiętać, że wyjeżdżając za granice Polski, muszą się liczyć z opłatami~\emph{roamingowymi}. Poza tym nie mogą oni prowadzić w ten sposób rozmów z wieloma osobami naraz oraz narażają swoje rozmowy na podsłuchanie służbom oddalonym o setki kilometrów, co jest bardzo utrudnione przy korzystaniu lokalnie z~\emph{WiFi}.
 
 %------------------------------------------------------------------------------
 
