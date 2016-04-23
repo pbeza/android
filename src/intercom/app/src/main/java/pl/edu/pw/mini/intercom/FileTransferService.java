@@ -2,9 +2,11 @@ package pl.edu.pw.mini.intercom;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pInfo;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -14,152 +16,83 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p/>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
 public class FileTransferService extends IntentService {
 
     private static final String LOG_TAG = "FileTransferService";
-
-    private static final int SOCKET_TIMEOUT = 5000;
-    public static final String ACTION_SEND_FILE = "com.example.android.wifidirectp2p.SEND_FILE";
-    public static final String EXTRAS_FILE_PATH = "file_url";
-    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
-    public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
+    private static final String WORKER_THREAD_NAME = LOG_TAG;
+    private static final int SOCKET_MILISEC_TIMEOUT = 5000;
+    public static final int PORT_NUMBER = 8988;
+    private static final String PACKAGE_PREFIX = "pl.edu.pw.mini.intercom.";
+    private static final String ACTION_SEND_FILE = PACKAGE_PREFIX + "SEND_FILE";
+    private static final String EXTRAS_FILE_PATH = PACKAGE_PREFIX + "file_url";
+    private static final String EXTRAS_GROUP_OWNER_ADDRESS = PACKAGE_PREFIX + "go_host";
+    private static final String EXTRAS_GROUP_OWNER_PORT = PACKAGE_PREFIX + "go_port";
 
     public FileTransferService(String name) {
         super(name);
     }
 
     public FileTransferService() {
-        super("FileTransferService");
+        super(WORKER_THREAD_NAME);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see android.app.IntentService#onHandleIntent(android.content.Intent)
-     */
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Context context = getApplicationContext();
-        if (intent.getAction().equals(ACTION_SEND_FILE)) {
-            String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
-            String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
-            Socket socket = new Socket();
-            int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
+        if (intent == null) {
+            Log.w(LOG_TAG, "Given intent is null");
+            return;
+        }
 
+        final String action = intent.getAction();
+
+        if (action.equals(ACTION_SEND_FILE)) {
+            final Bundle extras = intent.getExtras();
+            final String fileUri = extras.getString(EXTRAS_FILE_PATH);
+            final String host = extras.getString(EXTRAS_GROUP_OWNER_ADDRESS);
+            final int port = extras.getInt(EXTRAS_GROUP_OWNER_PORT);
+            sendFileToPeer(fileUri, host, port);
+        }
+    }
+
+    private void sendFileToPeer(String fileUri, String host, int port) {
+        final Socket socket = new Socket();
+
+        try {
+            Log.d(LOG_TAG, "Opening client socket (host = " + host + ", port = " + port + ")");
+            socket.bind(null);
+            socket.connect(new InetSocketAddress(host, port), SOCKET_MILISEC_TIMEOUT);
+            Log.d(LOG_TAG, "Client socket - isConnected: " + socket.isConnected());
+            final OutputStream stream = socket.getOutputStream();
+            final Context context = getApplicationContext();
+            final ContentResolver cr = context.getContentResolver();
+            InputStream is = null;
             try {
-                Log.d(LOG_TAG, "Opening client socket - ");
-                socket.bind(null);
-                socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
-
-                Log.d(LOG_TAG, "Client socket - " + socket.isConnected());
-                OutputStream stream = socket.getOutputStream();
-                ContentResolver cr = context.getContentResolver();
-                InputStream is = null;
+                is = cr.openInputStream(Uri.parse(fileUri));
+            } catch (FileNotFoundException e) {
+                Log.e(LOG_TAG, e.toString(), e);
+            }
+            DeviceDetailFragment.copyFile(is, stream);
+            Log.d(LOG_TAG, "Data written successfully");
+        } catch (IOException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+        } finally {
+            if (socket != null && socket.isConnected()) {
                 try {
-                    is = cr.openInputStream(Uri.parse(fileUri));
-                } catch (FileNotFoundException e) {
-                    Log.d(LOG_TAG, e.toString());
-                }
-                DeviceDetailFragment.copyFile(is, stream);
-                Log.d(LOG_TAG, "Client: Data written");
-            } catch (IOException e) {
-                Log.e(LOG_TAG, e.getMessage());
-            } finally {
-                if (socket != null) {
-                    if (socket.isConnected()) {
-                        try {
-                            socket.close();
-                        } catch (IOException e) {
-                            // Give up
-                            e.printStackTrace();
-                        }
-                    }
+                    socket.close();
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Cannot close socket", e);
                 }
             }
         }
     }
 
-//    // TODO: Rename actions, choose action names that describe tasks that this
-//    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-//    private static final String ACTION_FOO = "pl.edu.pw.mini.intercom.action.FOO";
-//    private static final String ACTION_BAZ = "pl.edu.pw.mini.intercom.action.BAZ";
-//
-//    // TODO: Rename parameters
-//    private static final String EXTRA_PARAM1 = "pl.edu.pw.mini.intercom.extra.PARAM1";
-//    private static final String EXTRA_PARAM2 = "pl.edu.pw.mini.intercom.extra.PARAM2";
-//
-//    public FileTransferService() {
-//        super("FileTransferService");
-//    }
-//
-//    /**
-//     * Starts this service to perform action Foo with the given parameters. If
-//     * the service is already performing a task this action will be queued.
-//     *
-//     * @see IntentService
-//     */
-//    // TODO: Customize helper method
-//    public static void startActionFoo(Context context, String param1, String param2) {
-//        Intent intent = new Intent(context, FileTransferService.class);
-//        intent.setAction(ACTION_FOO);
-//        intent.putExtra(EXTRA_PARAM1, param1);
-//        intent.putExtra(EXTRA_PARAM2, param2);
-//        context.startService(intent);
-//    }
-//
-//    /**
-//     * Starts this service to perform action Baz with the given parameters. If
-//     * the service is already performing a task this action will be queued.
-//     *
-//     * @see IntentService
-//     */
-//    // TODO: Customize helper method
-//    public static void startActionBaz(Context context, String param1, String param2) {
-//        Intent intent = new Intent(context, FileTransferService.class);
-//        intent.setAction(ACTION_BAZ);
-//        intent.putExtra(EXTRA_PARAM1, param1);
-//        intent.putExtra(EXTRA_PARAM2, param2);
-//        context.startService(intent);
-//    }
-//
-//    @Override
-//    protected void onHandleIntent(Intent intent) {
-//        if (intent != null) {
-//            final String action = intent.getAction();
-//            if (ACTION_FOO.equals(action)) {
-//                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-//                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-//                handleActionFoo(param1, param2);
-//            } else if (ACTION_BAZ.equals(action)) {
-//                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-//                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-//                handleActionBaz(param1, param2);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Handle action Foo in the provided background thread with the provided
-//     * parameters.
-//     */
-//    private void handleActionFoo(String param1, String param2) {
-//        // TODO: Handle action Foo
-//        throw new UnsupportedOperationException("Not yet implemented");
-//    }
-//
-//    /**
-//     * Handle action Baz in the provided background thread with the provided
-//     * parameters.
-//     */
-//    private void handleActionBaz(String param1, String param2) {
-//        // TODO: Handle action Baz
-//        throw new UnsupportedOperationException("Not yet implemented");
-//    }
+    public static void startFileTransferService(Context context, Uri uri, WifiP2pInfo info) {
+        final Intent s = new Intent(context, FileTransferService.class);
+        s.setAction(ACTION_SEND_FILE);
+        s.putExtra(EXTRAS_FILE_PATH, uri.toString());
+        s.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, info.groupOwnerAddress.getHostAddress());
+        s.putExtra(EXTRAS_GROUP_OWNER_PORT, PORT_NUMBER);
+        context.startService(s);
+    }
 }

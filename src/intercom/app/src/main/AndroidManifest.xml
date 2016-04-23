@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pl.edu.pw.mini.intercom">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="pl.edu.pw.mini.intercom">
 
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- List of available permissions: http://developer.android.com/reference/android/Manifest.permission.html -->
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-feature
-        android:name="android.hardware.wifi.direct"
-        android:required="true" />
+    <!-- List of all available features: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#features-reference -->
+
+    <uses-feature android:name="android.hardware.wifi.direct" android:required="true" />
 
     <!-- Used for transferring files  after a successful connection -->
-    <service
-        android:name=".FileTransferService"
-        android:enabled="true" />
+
+    <service android:name=".FileTransferService" android:enabled="true" />
 
     <application
         android:allowBackup="true"
