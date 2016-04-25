@@ -10,7 +10,6 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
 
     private static final String LOG_TAG = "MainActivity";
-    private IntentFilter intentFilter;
+    private IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver;
@@ -46,18 +45,10 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, R.string.floating_button_snackbar_text, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -69,12 +60,13 @@ public class MainActivity extends AppCompatActivity
 
         fragmentManager = getFragmentManager();
         addActionsToIntentFilter();
-        initWiFiPeerToPeer();
-        //discoverPeers(); // TODO
+        manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        channel = manager.initialize(this, getMainLooper(), null);
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this); // TODO need to be in onResume()?
+        //discoverPeers();
     }
 
     private void addActionsToIntentFilter() {
-        intentFilter = new IntentFilter();
         final String[] actions = {
                 WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION,
                 WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION,
@@ -86,33 +78,36 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void initWiFiPeerToPeer() {
-        manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = manager.initialize(this, getMainLooper(), null);
-        // TODO need to be in onResume()?
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         registerReceiver(receiver, intentFilter);
+        Log.d(LOG_TAG, "onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
+        Log.d(LOG_TAG, "onPause()");
     }
 
     public void resetData() {
-        final DeviceListFragment fragmentList = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
+        clearPeers();
+        resetDeviceDetailFragment();
+    }
+
+    private void resetDeviceDetailFragment() {
         final DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
-        if (fragmentList != null) {
-            fragmentList.clearPeers();
-        }
         if (fragmentDetails != null) {
             fragmentDetails.resetViews();
+        }
+    }
+
+    private void clearPeers() {
+        final DeviceListFragment fragmentList = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
+        if (fragmentList != null) {
+            fragmentList.clearPeers();
         }
     }
 
@@ -142,19 +137,20 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onSuccess() {
-                Toast.makeText(MainActivity.this, R.string.on_discovery_success, Toast.LENGTH_SHORT).show();
+                // WiFiDirectBroadcastReceiver (WIFI_P2P_PEERS_CHANGED_ACTION) will notify us
+                Toast.makeText(MainActivity.this, R.string.on_discovery_init_success, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Toast.makeText(MainActivity.this, getString(R.string.on_discovery_failure, reasonCode), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.on_discovery_init_failure, reasonCode), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public void showDetails(WifiP2pDevice device) {
-        DeviceDetailFragment fragment = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
+        final DeviceDetailFragment fragment = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
         fragment.showDetails(device);
     }
 
@@ -164,7 +160,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onSuccess() {
-                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+                // WiFiDirectBroadcastReceiver (WIFI_P2P_CONNECTION_CHANGED_ACTION) will notify us
                 Log.d(LOG_TAG, "Connection successful");
             }
 
@@ -182,13 +178,13 @@ public class MainActivity extends AppCompatActivity
         manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
 
             @Override
-            public void onFailure(int reasonCode) {
-                Log.d(LOG_TAG, "Disconnect failed. Reason :" + reasonCode);
+            public void onSuccess() {
+                fragment.getView().setVisibility(View.GONE);
             }
 
             @Override
-            public void onSuccess() {
-                fragment.getView().setVisibility(View.GONE);
+            public void onFailure(int reasonCode) {
+                Log.d(LOG_TAG, "Disconnect failed. Reason :" + reasonCode);
             }
         });
     }
@@ -200,7 +196,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.reconnection, Toast.LENGTH_LONG).show();
             resetData();
             retryChannel = true;
-            manager.initialize(this, getMainLooper(), this);
+            channel = manager.initialize(this, getMainLooper(), this);
         } else {
             Toast.makeText(this, R.string.connection_lost_permanently, Toast.LENGTH_LONG).show();
         }
@@ -210,32 +206,35 @@ public class MainActivity extends AppCompatActivity
     public void cancelDisconnect() {
         // A cancel abort request by user. Disconnect i.e. removeGroup if already connected.
         // Else, request WifiP2pManager to abort the ongoing request.
-        if (manager != null) {
-            final DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
-            if (fragment.getDevice() == null || fragment.getDevice().status == WifiP2pDevice.CONNECTED) {
-                disconnect();
-            } else if (fragment.getDevice().status == WifiP2pDevice.AVAILABLE || fragment.getDevice().status == WifiP2pDevice.INVITED) {
-                manager.cancelConnect(channel, new WifiP2pManager.ActionListener() {
+        if (manager == null) {
+            return;
+        }
+        final DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
+        if (fragment.getDevice() == null || fragment.getDevice().status == WifiP2pDevice.CONNECTED) {
+            disconnect();
+        } else if (fragment.getDevice().status == WifiP2pDevice.AVAILABLE || fragment.getDevice().status == WifiP2pDevice.INVITED) {
+            manager.cancelConnect(channel, new WifiP2pManager.ActionListener() {
 
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(MainActivity.this, R.string.aborting_connection, Toast.LENGTH_SHORT).show();
-                    }
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(MainActivity.this, R.string.aborting_connection, Toast.LENGTH_SHORT).show();
+                }
 
-                    @Override
-                    public void onFailure(int reasonCode) {
-                        Toast.makeText(MainActivity.this, getString(R.string.aborting_connection_fail, reasonCode), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+                @Override
+                public void onFailure(int reasonCode) {
+                    Toast.makeText(MainActivity.this, getString(R.string.aborting_connection_fail, reasonCode), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
-    /*** GUI below. TODO: separate GUI from WiFi logic ***/
+    /***
+     * GUI below. TODO: separate GUI from WiFi logic
+     ***/
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -287,5 +286,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void floatingActionButtonClicked(View view) {
+        Snackbar.make(view, R.string.floating_button_snackbar_text, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 }

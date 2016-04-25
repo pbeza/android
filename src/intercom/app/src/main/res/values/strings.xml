@@ -14,12 +14,12 @@
     <string name="empty_message">No devices found. Turn on P2P and perform discovery from the Action Bar</string>
     <string name="p2p_off_warning">Enable P2P from the system settings above</string>
     <string name="group_owner_text">Am I the Group Owner? </string>
-    <string name="label_me">This Device</string>
+    <string name="label_me">This device</string>
     <string name="label_peers">Peers</string>
     <string name="intro_message">intro message</string>
     <string name="floating_button_snackbar_text">Replace with your own action</string>
-    <string name="on_discovery_success">Discovery Initiated</string>
-    <string name="on_discovery_failure">Discovery Failed : %d</string>
+    <string name="on_discovery_init_success">Discovery Initiated</string>
+    <string name="on_discovery_init_failure">Discovery Failed : %d</string>
     <string name="connection_failure">Connect failed. Retry.</string>
     <string name="reconnection">Channel lost. Trying again.</string>
     <string name="connection_lost_permanently">Severe! Channel is probably lost permanently. Try Disable/Re-Enable P2P.</string>

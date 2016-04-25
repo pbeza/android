@@ -1,62 +1,112 @@
 package pl.edu.pw.mini.intercom;
 
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A ListFragment that displays available peers on discovery and requests the
- * parent activity to handle user interaction events.
- * <p>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface. TODO rly?
- */
-public class DeviceListFragment extends ListFragment implements PeerListListener {
+public class DeviceListFragment extends Fragment implements PeerListListener {
 
     private static final String LOG_TAG = "DeviceListFragment";
-    final private List<WifiP2pDevice> peers = new ArrayList<>();
-    private ProgressDialog progressDialog = null;
-    private View contentView = null;
-    private WifiP2pDevice device;
+    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
+    private static final int SPAN_COUNT = 2;
+    private static final LayoutManagerType DEFAULT_LAYOUT_MANAGER_TYPE = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        this.setListAdapter(new WiFiPeerListAdapter(getActivity(), R.layout.fragment_row_devices, peers));
+    private final List<WifiP2pDevice> peers = new ArrayList<>();
+    private ProgressDialog progressDialog = null;
+    private WifiP2pDevice device;
+    private WiFiPeerListAdapter adapter;
+    private View rootView;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private LayoutManagerType currentLayoutManagerType = DEFAULT_LAYOUT_MANAGER_TYPE;
+
+    private enum LayoutManagerType {
+        GRID_LAYOUT_MANAGER,
+        LINEAR_LAYOUT_MANAGER
     }
 
     @Override
+    public void onPeersAvailable(WifiP2pDeviceList peerList) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        peers.clear();
+        peers.addAll(peerList.getDeviceList());
+        adapter.notifyDataSetChanged();
+        if (peers.size() == 0) {
+            Log.d(LOG_TAG, "No devices found");
+        }
+    }
+
+    /**
+     * It's called eg. when orientation changes.
+     */
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return contentView = inflater.inflate(R.layout.device_list, null);
-//        contentView = inflater.inflate(R.layout.device_list, container, false);
-//        // Set the adapter
-//        if (contentView instanceof RecyclerView) {
-//            Context context = contentView.getContext();
-//            RecyclerView recyclerView = (RecyclerView) contentView;
-//            if (mColumnCount <= 1) {
-//                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//            } else {
-//                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-//            }
-//            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-//        }
-//        return contentView;
+
+        rootView = inflater.inflate(R.layout.device_list, container, false);
+        rootView.setTag(LOG_TAG);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
+        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
+        // elements are laid out.
+        layoutManager = new LinearLayoutManager(getActivity());
+        if (savedInstanceState != null) {
+            // Restore saved layout manager type
+            currentLayoutManagerType = (LayoutManagerType) savedInstanceState.getSerializable(KEY_LAYOUT_MANAGER);
+        }
+        setRecyclerViewLayoutManager(currentLayoutManagerType);
+        adapter = new WiFiPeerListAdapter(peers, new PeerItemClick());
+        recyclerView.setAdapter(adapter);
+        return rootView;
+    }
+
+    public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
+        int scrollPosition = 0;
+        final RecyclerView.LayoutManager l = recyclerView.getLayoutManager();
+
+        if (l != null) {
+            scrollPosition = ((LinearLayoutManager) l).findFirstCompletelyVisibleItemPosition();
+        }
+
+        switch (layoutManagerType) {
+            case GRID_LAYOUT_MANAGER:
+                layoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
+                currentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
+                break;
+            case LINEAR_LAYOUT_MANAGER:
+                layoutManager = new LinearLayoutManager(getActivity());
+                currentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                break;
+            default:
+                layoutManager = new LinearLayoutManager(getActivity());
+                currentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        }
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.scrollToPosition(scrollPosition);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, currentLayoutManagerType);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     public WifiP2pDevice getDevice() {
@@ -81,66 +131,25 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         }
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        WifiP2pDevice device = (WifiP2pDevice) getListAdapter().getItem(position);
-        ((DeviceActionListener) getActivity()).showDetails(device);
-    }
-
-    private class WiFiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
-        final private List<WifiP2pDevice> items;
-
-        public WiFiPeerListAdapter(Context context, int textViewResourceId, List<WifiP2pDevice> objects) {
-            super(context, textViewResourceId, objects);
-            items = objects;
-        }
+    private class PeerItemClick implements WiFiPeerListAdapter.ViewHolder.OnItemClickListener {
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.fragment_row_devices, null);
-            }
-            WifiP2pDevice device = items.get(position);
-            if (device != null) {
-                TextView top = (TextView) v.findViewById(R.id.device_name);
-                TextView bottom = (TextView) v.findViewById(R.id.device_details);
-                if (top != null) {
-                    top.setText(device.deviceName);
-                }
-                if (bottom != null) {
-                    bottom.setText(getDeviceStatus(device.status));
-                }
-            }
-            return v;
+        public void onClick(WifiP2pDevice device, View view) {
+            ((DeviceActionListener) getActivity()).showDetails(device);
         }
     }
 
     public void updateUiForThisDevice(WifiP2pDevice device) {
         this.device = device;
-        TextView view = (TextView) contentView.findViewById(R.id.my_name);
+        TextView view = (TextView) rootView.findViewById(R.id.my_name);
         view.setText(device.deviceName);
-        view = (TextView) contentView.findViewById(R.id.my_status);
+        view = (TextView) rootView.findViewById(R.id.my_status);
         view.setText(getDeviceStatus(device.status));
-    }
-
-    @Override
-    public void onPeersAvailable(WifiP2pDeviceList peerList) {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-        peers.clear();
-        peers.addAll(peerList.getDeviceList());
-        ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
-        if (peers.size() == 0) {
-            Log.d(LOG_TAG, "No devices found");
-        }
     }
 
     public void clearPeers() {
         peers.clear();
-        ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     public void onInitiateDiscovery() {
@@ -150,7 +159,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         progressDialog = ProgressDialog.show(getActivity(), "Press back to cancel", "finding peers", true, true, new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-
+                Log.d(LOG_TAG, "finding peers cancelled");
             }
         });
     }
@@ -164,68 +173,4 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
 
         void disconnect();
     }
-
-//    // TODO: Customize parameter argument names
-//    private static final String ARG_COLUMN_COUNT = "column-count";
-//    // TODO: Customize parameters
-//    private int mColumnCount = 1;
-//    private OnListFragmentInteractionListener mListener;
-//
-//    /**
-//     * Mandatory empty constructor for the fragment manager to instantiate the
-//     * fragment (e.g. upon screen orientation changes).
-//     */
-//    public DeviceListFragment() {
-//    }
-//
-//    // TODO: Customize parameter initialization
-//    @SuppressWarnings("unused")
-//    public static DeviceListFragment newInstance(int columnCount) {
-//        DeviceListFragment fragment = new DeviceListFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(ARG_COLUMN_COUNT, columnCount);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        if (getArguments() != null) {
-//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnListFragmentInteractionListener) {
-//            mListener = (OnListFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnListFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p/>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnListFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onListFragmentInteraction(DummyItem item);
-//    }
 }

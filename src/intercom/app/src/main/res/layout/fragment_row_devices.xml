@@ -2,20 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="?android:attr/activatedBackgroundIndicator"
-    android:padding="6dip">
+    android:padding="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+    <!--android:background="?android:attr/activatedBackgroundIndicator"-->
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_marginRight="2dip"
+        android:layout_marginRight="2dp"
         android:src="@drawable/ic_wifi"
         android:contentDescription="@null"
         android:layout_marginEnd="2dp" />
 
     <LinearLayout
-        android:layout_width="0dip"
+        android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -23,14 +26,14 @@
         <TextView
             android:id="@+id/device_name"
             android:layout_width="fill_parent"
-            android:layout_height="0dip"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical" />
 
         <TextView
             android:id="@+id/device_details"
             android:layout_width="fill_parent"
-            android:layout_height="0dip"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:ellipsize="marquee"
             android:singleLine="true" />

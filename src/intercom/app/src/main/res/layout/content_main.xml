@@ -17,11 +17,11 @@
         android:paddingRight="@dimen/horizontal_page_margin"
         android:paddingTop="@dimen/vertical_page_margin">
 
-        <!--style="@style/SubText"-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/intro_message" />
+            android:text="@string/intro_message"
+            style="@style/SubText" />
 
         <fragment
             android:id="@+id/frag_list"
