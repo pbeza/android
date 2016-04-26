@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
 
     private static final String LOG_TAG = "MainActivity";
-    private IntentFilter intentFilter = new IntentFilter();
+    private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         /*** Not GUI related initialization ***/
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
         addActionsToIntentFilter();
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this); // TODO need to be in onResume()?
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         //discoverPeers();
     }
 
@@ -97,13 +97,6 @@ public class MainActivity extends AppCompatActivity
         resetDeviceDetailFragment();
     }
 
-    private void resetDeviceDetailFragment() {
-        final DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
-        if (fragmentDetails != null) {
-            fragmentDetails.resetViews();
-        }
-    }
-
     private void clearPeers() {
         final DeviceListFragment fragmentList = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
         if (fragmentList != null) {
@@ -111,14 +104,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void resetDeviceDetailFragment() {
+        final DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
+        if (fragmentDetails != null) {
+            fragmentDetails.resetViews();
+        }
+    }
+
     public void showWirelessSettings(View v) {
         if (manager != null && channel != null) {
             // Since this is the system wireless settings activity, it's not going to send us a
             // result. We will be notified by WiFiDeviceBroadcastReceiver instead.
-            final Intent wirelessSettings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+            final Intent wirelessSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
             startActivity(wirelessSettings);
         } else {
-            Log.e(LOG_TAG, "channel or manager is null");
+            Log.e(LOG_TAG, "Channel or manager is null");
         }
     }
 
@@ -210,9 +210,10 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         final DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
-        if (fragment.getDevice() == null || fragment.getDevice().status == WifiP2pDevice.CONNECTED) {
+        final WifiP2pDevice device = fragment.getDevice();
+        if (device == null || device.status == WifiP2pDevice.CONNECTED) {
             disconnect();
-        } else if (fragment.getDevice().status == WifiP2pDevice.AVAILABLE || fragment.getDevice().status == WifiP2pDevice.INVITED) {
+        } else if (device.status == WifiP2pDevice.AVAILABLE || device.status == WifiP2pDevice.INVITED) {
             manager.cancelConnect(channel, new WifiP2pManager.ActionListener() {
 
                 @Override
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

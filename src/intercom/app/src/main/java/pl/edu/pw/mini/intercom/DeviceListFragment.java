@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
         peers.addAll(peerList.getDeviceList());
         adapter.notifyDataSetChanged();
         if (peers.size() == 0) {
-            Log.d(LOG_TAG, "No devices found");
+            Toast.makeText(getActivity().getApplicationContext(), R.string.no_peers_found, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -61,11 +62,8 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.device_list, container, false);
-        rootView.setTag(LOG_TAG);
+        //rootView.setTag(LOG_TAG);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
-        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
-        // elements are laid out.
         layoutManager = new LinearLayoutManager(getActivity());
         if (savedInstanceState != null) {
             // Restore saved layout manager type
@@ -77,7 +75,7 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
         return rootView;
     }
 
-    public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
+    private void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
         int scrollPosition = 0;
         final RecyclerView.LayoutManager l = recyclerView.getLayoutManager();
 
@@ -91,12 +89,10 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
                 currentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
                 break;
             case LINEAR_LAYOUT_MANAGER:
-                layoutManager = new LinearLayoutManager(getActivity());
-                currentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                break;
             default:
                 layoutManager = new LinearLayoutManager(getActivity());
                 currentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                break;
         }
 
         recyclerView.setLayoutManager(layoutManager);
@@ -105,8 +101,8 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, currentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, currentLayoutManagerType);
     }
 
     public WifiP2pDevice getDevice() {
@@ -114,7 +110,7 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
     }
 
     private static String getDeviceStatus(int deviceStatus) {
-        Log.d(LOG_TAG, "Peer status :" + deviceStatus);
+        Log.d(LOG_TAG, "Peer status: " + deviceStatus);
         switch (deviceStatus) {
             case WifiP2pDevice.AVAILABLE:
                 return "Available";
@@ -156,10 +152,10 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
-        progressDialog = ProgressDialog.show(getActivity(), "Press back to cancel", "finding peers", true, true, new DialogInterface.OnCancelListener() {
+        progressDialog = ProgressDialog.show(getActivity(), getString(R.string.press_back_to_cancel), getString(R.string.finding_peers), true, true, new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                Log.d(LOG_TAG, "finding peers cancelled");
+                Log.d(LOG_TAG, "Finding peers cancelled");
             }
         });
     }

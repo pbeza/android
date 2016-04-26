@@ -40,9 +40,9 @@ public class WiFiPeerListAdapter extends RecyclerView.Adapter<WiFiPeerListAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder /*implements ViewHolder.OnItemClickListener*/ {
-        public TextView deviceName;
-        public TextView deviceDetail;
-        public ViewHolder.OnItemClickListener listener;
+        public final TextView deviceName;
+        public final TextView deviceDetail;
+        public final ViewHolder.OnItemClickListener listener;
         private WifiP2pDevice device;
 
         public ViewHolder(View view, ViewHolder.OnItemClickListener listener) {

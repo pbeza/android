@@ -34,6 +34,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             wifiPeer2PeerConnectionChangedAction(intent);
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             wifiPeer2PeerThisDeviceChangedAction(intent);
+        } else {
+            Log.w(LOG_TAG, "Unexpected action: " + action);
         }
     }
 

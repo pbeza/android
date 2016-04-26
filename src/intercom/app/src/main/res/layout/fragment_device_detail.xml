@@ -15,35 +15,29 @@
             android:id="@+id/status_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"></TextView>
+            android:layout_gravity="center" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btn_connect"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="@string/connect_peer_button" />
 
-            <Button
-                android:id="@+id/btn_connect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/connect_peer_button"
-                style="?android:attr/buttonBarButtonStyle" />
+        <Button
+            android:id="@+id/btn_disconnect"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/disconnect_peer_button" />
 
-            <Button
-                android:id="@+id/btn_disconnect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/disconnect_peer_button"
-                style="?android:attr/buttonBarButtonStyle" />
-
-            <Button
-                android:id="@+id/btn_start_client"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/get_file_button"
-                android:visibility="gone"
-                style="?android:attr/buttonBarButtonStyle" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btn_launch_gallery"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/get_file_button"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/device_address"

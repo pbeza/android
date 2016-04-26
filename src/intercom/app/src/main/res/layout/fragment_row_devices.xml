@@ -6,7 +6,6 @@
     android:clickable="true"
     android:focusable="true"
     android:background="?attr/selectableItemBackground">
-    <!--android:background="?android:attr/activatedBackgroundIndicator"-->
 
     <ImageView
         android:id="@+id/icon"

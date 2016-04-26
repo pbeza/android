@@ -26,8 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-//import android.support.v4.app.Fragment; // TODO vs android.app.Fragment
+import java.util.Locale;
 
 public class DeviceDetailFragment extends Fragment implements WifiP2pManager.ConnectionInfoListener {
 
@@ -40,11 +39,6 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     private WifiP2pDevice device;
     private WifiP2pInfo info;
     private ProgressDialog progressDialog = null;
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,13 +82,12 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
                 }
         );
 
-        contentView.findViewById(R.id.btn_start_client).setOnClickListener(
+        contentView.findViewById(R.id.btn_launch_gallery).setOnClickListener(
                 new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        // Allow user to pick an image from Gallery or other registered apps
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                         intent.setType(IMAGE_MIME_TYPE);
                         startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
                     }
@@ -108,10 +101,10 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         // User has picked an image. Transfer it to group owner i.e peer using FileTransferService.
-        Uri uri = data.getData();
-        TextView statusText = (TextView) contentView.findViewById(R.id.status_text);
+        final Uri uri = data.getData();
+        final TextView statusText = (TextView) contentView.findViewById(R.id.status_text);
         statusText.setText(getResources().getString(R.string.sending_file, uri));
-        Log.d(LOG_TAG, "Intent----------- " + uri);
+        Log.d(LOG_TAG, "Intent sending URI: " + uri);
         FileTransferService.startFileTransferService(getActivity(), uri, info);
     }
 
@@ -138,7 +131,7 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
             new FileServerAsyncTask(getActivity(), contentView.findViewById(R.id.status_text)).execute();
         } else if (info.groupFormed) {
             // The other device acts as the client. In this case, we enable the get file button.
-            contentView.findViewById(R.id.btn_start_client).setVisibility(View.VISIBLE);
+            contentView.findViewById(R.id.btn_launch_gallery).setVisibility(View.VISIBLE);
             final TextView statusTextView = (TextView) contentView.findViewById(R.id.status_text);
             statusTextView.setText(getResources().getString(R.string.client_text));
         }
@@ -167,7 +160,7 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
             final TextView view = (TextView) contentView.findViewById(id);
             view.setText(R.string.empty);
         }
-        contentView.findViewById(R.id.btn_start_client).setVisibility(View.GONE);
+        contentView.findViewById(R.id.btn_launch_gallery).setVisibility(View.GONE);
         this.getView().setVisibility(View.GONE);
     }
 
@@ -224,7 +217,9 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         }
 
         protected String generateFilename() {
-            return String.format("%s/%s/%s-%d%s",
+            final Locale locale = context.getResources().getConfiguration().locale;
+            return String.format(locale,
+                    "%s/%s/%s-%d%s",
                     Environment.getExternalStorageDirectory(),
                     context.getPackageName(),
                     IMAGE_FILENAME_PREFIX,
