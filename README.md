@@ -44,7 +44,7 @@ Tutoriale [Androida](https://en.wikipedia.org/wiki/Android_(operating_system)):
 Inne:
 - [Low-latency audio playback](http://stackoverflow.com/questions/14842803/low-latency-audio-playback-on-android)
 - [Sound API](http://stackoverflow.com/questions/7266298/android-sound-api-deterministic-low-latency)
-- [OpenSL ES dla Androida](http://developer.android.com/ndk/guides/audio/opensl-for-android.html)
+- [OpenSL ES dla Androida](http://developer.android.com/ndk/guides/audio/opensl-for-android.html) (przykłady: [Audio-Echo](https://github.com/googlesamples/android-ndk/tree/master/audio-echo), [Native Audio](https://github.com/googlesamples/android-ndk/tree/master/native-audio))
 - [API Androida](http://developer.android.com/reference/packages.html)
 - [Android design](http://www.google.com/design/spec/material-design/introduction.html)
 - [Jak zmniejszyć rozmiar PDF wygenerowanego pdflatex'em?](http://tex.stackexchange.com/questions/18987/how-to-make-the-pdfs-produced-by-pdflatex-smaller)
