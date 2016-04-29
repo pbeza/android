@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="pl.edu.pw.mini.intercom">
 
+    <!--<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="23" />-->
+
     <!-- List of available permissions: http://developer.android.com/reference/android/Manifest.permission.html -->
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
