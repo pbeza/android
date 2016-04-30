@@ -1,0 +1,111 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .idea/
+* .idea/.name
+* .idea/AudioDemo.iml
+* .idea/compiler.xml
+* .idea/copyright/
+* .idea/copyright/profiles_settings.xml
+* .idea/encodings.xml
+* .idea/misc.xml
+* .idea/modules.xml
+* .idea/workspace.xml
+* AudioDemo/
+* AudioDemo/.idea/
+* AudioDemo/.idea/.name
+* AudioDemo/.idea/compiler.xml
+* AudioDemo/.idea/copyright/
+* AudioDemo/.idea/copyright/profiles_settings.xml
+* AudioDemo/.idea/encodings.xml
+* AudioDemo/.idea/misc.xml
+* AudioDemo/.idea/workspace.xml
+* AudioDemo/app/
+* AudioDemo/app/build.gradle
+* AudioDemo/app/src/
+* AudioDemo/app/src/main/
+* AudioDemo/app/src/main/AndroidManifest.xml
+* AudioDemo/app/src/main/java/
+* AudioDemo/app/src/main/java/com/
+* AudioDemo/app/src/main/java/com/javaorigin/
+* AudioDemo/app/src/main/java/com/javaorigin/audio/
+* AudioDemo/app/src/main/java/com/javaorigin/audio/MainActivity.java
+* AudioDemo/app/src/main/res/
+* AudioDemo/app/src/main/res/drawable-hdpi/
+* AudioDemo/app/src/main/res/drawable-hdpi/ic_launcher.png
+* AudioDemo/app/src/main/res/drawable-mdpi/
+* AudioDemo/app/src/main/res/drawable-mdpi/ic_launcher.png
+* AudioDemo/app/src/main/res/drawable-xhdpi/
+* AudioDemo/app/src/main/res/drawable-xhdpi/ic_launcher.png
+* AudioDemo/app/src/main/res/drawable-xxhdpi/
+* AudioDemo/app/src/main/res/drawable-xxhdpi/ic_launcher.png
+* AudioDemo/app/src/main/res/layout/
+* AudioDemo/app/src/main/res/layout/activity_main.xml
+* AudioDemo/app/src/main/res/menu/
+* AudioDemo/app/src/main/res/menu/main.xml
+* AudioDemo/app/src/main/res/values-sw600dp/
+* AudioDemo/app/src/main/res/values-sw600dp/dimens.xml
+* AudioDemo/app/src/main/res/values-sw720dp-land/
+* AudioDemo/app/src/main/res/values-sw720dp-land/dimens.xml
+* AudioDemo/app/src/main/res/values-v11/
+* AudioDemo/app/src/main/res/values-v11/styles.xml
+* AudioDemo/app/src/main/res/values-v14/
+* AudioDemo/app/src/main/res/values-v14/styles.xml
+* AudioDemo/app/src/main/res/values/
+* AudioDemo/app/src/main/res/values/dimens.xml
+* AudioDemo/app/src/main/res/values/strings.xml
+* AudioDemo/app/src/main/res/values/styles.xml
+* AudioDemo/build.gradle
+* AudioDemo/gradle/
+* AudioDemo/gradle/wrapper/
+* AudioDemo/gradle/wrapper/gradle-wrapper.jar
+* AudioDemo/gradle/wrapper/gradle-wrapper.properties
+* AudioDemo/gradlew
+* AudioDemo/gradlew.bat
+* AudioDemo/local.properties
+* AudioDemo/settings.gradle
+* ic_launcher-web.png
+* proguard-project.txt
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:18.0.0
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app/src/main/AndroidManifest.xml
+* assets/ => app/src/main/assets
+* res/ => app/src/main/res/
+* src/ => app/src/main/java/
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
