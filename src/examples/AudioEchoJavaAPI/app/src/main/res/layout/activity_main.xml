@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textView1"
@@ -18,11 +18,11 @@
         android:id="@+id/modeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignStart="@+id/textView1"
         android:layout_below="@+id/textView1"
         android:layout_marginTop="24dp"
-        android:text="Call Mode" 
-        android:onClick="modeChange"/>
+        android:text="@string/call_mode"
+        android:onClick="modeChange" />
 
     <Button
         android:id="@+id/playBtn"
@@ -30,9 +30,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/modeBtn"
         android:layout_alignBottom="@+id/modeBtn"
-        android:layout_marginLeft="30dp"
-        android:layout_toRightOf="@+id/modeBtn"
+        android:layout_marginStart="30dp"
+        android:layout_toEndOf="@+id/modeBtn"
         android:onClick="play"
-        android:text="Pause" />
+        android:text="@string/pause" />
 
 </RelativeLayout>
