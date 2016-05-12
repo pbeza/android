@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- List of all available features: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#features-reference -->
 
@@ -38,6 +40,7 @@
         </activity>
 
         <service android:name=".FileTransferService" android:exported="false" />
+        <service android:name=".EchoService" android:exported="false" />
     </application>
 
 </manifest>

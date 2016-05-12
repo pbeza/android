@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
-        //discoverPeers();
+        discoverPeers();
     }
 
     private void addActionsToIntentFilter() {
@@ -82,19 +82,17 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         registerReceiver(receiver, intentFilter);
-        Log.d(LOG_TAG, "onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
-        Log.d(LOG_TAG, "onPause()");
     }
 
-    public void resetData() {
+    public void clearViews() {
         clearPeers();
-        resetDeviceDetailFragment();
+        clearDetails();
     }
 
     private void clearPeers() {
@@ -104,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void resetDeviceDetailFragment() {
+    private void clearDetails() {
         final DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
         if (fragmentDetails != null) {
             fragmentDetails.resetViews();
@@ -184,7 +182,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFailure(int reasonCode) {
-                Log.d(LOG_TAG, "Disconnect failed. Reason :" + reasonCode);
+                Log.e(LOG_TAG, "Disconnect failed. Reason: " + reasonCode);
             }
         });
     }
@@ -194,7 +192,7 @@ public class MainActivity extends AppCompatActivity
         // Try once more
         if (manager != null && !retryChannel) {
             Toast.makeText(this, R.string.reconnection, Toast.LENGTH_LONG).show();
-            resetData();
+            clearViews();
             retryChannel = true;
             channel = manager.initialize(this, getMainLooper(), this);
         } else {
@@ -255,12 +253,10 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -269,7 +265,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {

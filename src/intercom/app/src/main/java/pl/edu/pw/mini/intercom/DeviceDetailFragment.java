@@ -1,32 +1,33 @@
 package pl.edu.pw.mini.intercom;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Locale;
 
 public class DeviceDetailFragment extends Fragment implements WifiP2pManager.ConnectionInfoListener {
 
@@ -39,26 +40,25 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     private WifiP2pDevice device;
     private WifiP2pInfo info;
     private ProgressDialog progressDialog = null;
+    private EchoService echoService;
+    private final ServiceConnection serviceConnection = new EchoServiceConnection();
+    private final Handler msgQueueHandler = new EchoHandler();
+    private boolean isServiceStarted = false;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        contentView = inflater.inflate(R.layout.fragment_device_detail, null);
-        contentView.findViewById(R.id.btn_connect).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                final WifiP2pConfig config = new WifiP2pConfig();
-                config.deviceAddress = device.deviceAddress;
-                config.wps.setup = WpsInfo.PBC;
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                progressDialog = ProgressDialog.show(getActivity(),
-                        getResources().getString(R.string.press_back_to_cancel),
-                        getResources().getString(R.string.connecting_to_device, device.deviceAddress),
-                        true,
-                        true
+    private class ConnectOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            final WifiP2pConfig config = new WifiP2pConfig();
+            config.deviceAddress = device.deviceAddress;
+            config.wps.setup = WpsInfo.PBC;
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            progressDialog = ProgressDialog.show(getActivity(),
+                    getResources().getString(R.string.press_back_to_cancel),
+                    getResources().getString(R.string.connecting_to_device, device.deviceAddress),
+                    true,
+                    true
 //                        new DialogInterface.OnCancelListener() {
 //
 //                            @Override
@@ -66,46 +66,82 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 //                                ((DeviceActionListener) getActivity()).cancelDisconnect();
 //                            }
 //                        }
-                );
-                ((DeviceListFragment.DeviceActionListener) getActivity()).connect(config);
+            );
+            ((DeviceListFragment.DeviceActionListener) getActivity()).connect(config);
 
-            }
-        });
+        }
+    }
 
-        contentView.findViewById(R.id.btn_disconnect).setOnClickListener(
-                new View.OnClickListener() {
+    private class DisconnectOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            ((DeviceListFragment.DeviceActionListener) getActivity()).disconnect();
+        }
+    }
 
-                    @Override
-                    public void onClick(View v) {
-                        ((DeviceListFragment.DeviceActionListener) getActivity()).disconnect();
-                    }
-                }
-        );
+    private class LaunchGalleryOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType(IMAGE_MIME_TYPE);
+            startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
+        }
+    }
 
-        contentView.findViewById(R.id.btn_launch_gallery).setOnClickListener(
-                new View.OnClickListener() {
+    private class EchoServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            echoService = ((EchoService.EchoServiceBinder) binder).getService();
+        }
 
-                    @Override
-                    public void onClick(View v) {
-                        final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType(IMAGE_MIME_TYPE);
-                        startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
-                    }
-                }
-        );
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            echoService = null;
+        }
+    }
 
+    private static class EchoHandler extends Handler {
+        public void handleMessage(Message message) {
+            final Bundle data = message.getData();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        if (echoService == null) {
+            doBindService();
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        // FIXME put back (?)
+        if (echoService != null) {
+            getActivity().getApplicationContext().unbindService(serviceConnection);
+            echoService = null;
+        }
+        super.onPause();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        contentView = inflater.inflate(R.layout.fragment_device_detail, null);
+        contentView.findViewById(R.id.btn_connect).setOnClickListener(new ConnectOnClickListener());
+        contentView.findViewById(R.id.btn_disconnect).setOnClickListener(new DisconnectOnClickListener());
+        contentView.findViewById(R.id.btn_launch_gallery).setOnClickListener(new LaunchGalleryOnClickListener());
         return contentView;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         // User has picked an image. Transfer it to group owner i.e peer using FileTransferService.
         final Uri uri = data.getData();
         final TextView statusText = (TextView) contentView.findViewById(R.id.status_text);
         statusText.setText(getResources().getString(R.string.sending_file, uri));
         Log.d(LOG_TAG, "Intent sending URI: " + uri);
-        FileTransferService.startFileTransferService(getActivity(), uri, info);
+        //FileTransferService.startFileTransferService(getActivity(), uri, info);
     }
 
     @Override
@@ -114,7 +150,9 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
             progressDialog.dismiss();
         }
         this.info = info;
-        this.getView().setVisibility(View.VISIBLE);
+        final View framgnetView = getView();
+        assert framgnetView != null;
+        framgnetView.setVisibility(View.VISIBLE);
 
         TextView view = (TextView) contentView.findViewById(R.id.group_owner);
         final String amIgroupOwner = info.isGroupOwner ? getResources().getString(R.string.yes) : getResources().getString(R.string.no);
@@ -127,6 +165,21 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 
         // After the group negotiation, we assign the group owner as the file server.
         // The file server is single threaded, single connection server socket.
+
+        if (!info.groupFormed) {
+            Log.e(LOG_TAG, "Group was not formed");
+            return;
+        }
+
+        if (!isServiceStarted) {
+            final Activity activity = getActivity();
+            assert activity != null;
+            activity.setVolumeControlStream(AudioManager.MODE_IN_COMMUNICATION);
+            EchoService.startEchoService(activity, info.isGroupOwner, info.groupOwnerAddress.getHostAddress());
+            isServiceStarted = true;
+        }
+
+        /*
         if (info.groupFormed && info.isGroupOwner) {
             new FileServerAsyncTask(getActivity(), contentView.findViewById(R.id.status_text)).execute();
         } else if (info.groupFormed) {
@@ -135,7 +188,18 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
             final TextView statusTextView = (TextView) contentView.findViewById(R.id.status_text);
             statusTextView.setText(getResources().getString(R.string.client_text));
         }
+        */
         contentView.findViewById(R.id.btn_connect).setVisibility(View.GONE);
+    }
+
+
+    private void doBindService() {
+        final Intent intent = new Intent(this.getActivity(), EchoService.class);
+        // Create a new Messenger for the communication back from the Service to the Activity
+        final Messenger messenger = new Messenger(msgQueueHandler);
+        intent.putExtra(EchoService.EXTRAS_MESSENGER_PARAM, messenger);
+//        intent.setAction(EchoService.ACTION_START_ECHO_PARAM);
+        getActivity().getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void showDetails(WifiP2pDevice device) {
@@ -164,69 +228,70 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         this.getView().setVisibility(View.GONE);
     }
 
-    public static class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
-
-        final private Context context;
-        final private TextView statusText;
-
-        public FileServerAsyncTask(Context context, View statusText) {
-            this.context = context;
-            this.statusText = (TextView) statusText;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                final ServerSocket serverSocket = new ServerSocket(FileTransferService.PORT_NUMBER);
-                Log.d(LOG_TAG, "Server: Socket opened");
-                final Socket client = serverSocket.accept();
-                Log.d(LOG_TAG, "Server: connection done");
-                final File f = new File(generateFilename());
-                final File dirs = new File(f.getParent());
-                if (!dirs.exists())
-                    dirs.mkdirs();
-                f.createNewFile();
-                Log.d(LOG_TAG, "Server: copying files " + f.toString());
-                final InputStream inputstream = client.getInputStream();
-                copyFile(inputstream, new FileOutputStream(f));
-                serverSocket.close();
-                return f.getAbsolutePath();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result == null) {
-                Log.w(LOG_TAG, "onPostExecute() result is null!");
-                return;
-            }
-            statusText.setText(context.getString(R.string.file_copied_successfully, result));
-            final Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            final Uri imgUri = Uri.parse("file://" + result);
-            intent.setDataAndType(imgUri, IMAGE_MIME_TYPE);
-            context.startActivity(intent);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            statusText.setText(R.string.opening_server_socket);
-        }
-
-        protected String generateFilename() {
-            final Locale locale = context.getResources().getConfiguration().locale;
-            return String.format(locale,
-                    "%s/%s/%s-%d%s",
-                    Environment.getExternalStorageDirectory(),
-                    context.getPackageName(),
-                    IMAGE_FILENAME_PREFIX,
-                    System.currentTimeMillis(),
-                    IMAGE_FILE_EXTENSION);
-        }
-    }
+//    public static class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
+//
+//        private static final String LOG_TAG = "FileServerAsyncTask";
+//        final private Context context;
+//        final private TextView statusText;
+//
+//        public FileServerAsyncTask(Context context, View statusText) {
+//            this.context = context;
+//            this.statusText = (TextView) statusText;
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            try {
+//                final ServerSocket serverSocket = new ServerSocket(FileTransferService.PORT_NUMBER);
+//                Log.d(LOG_TAG, "Server: Socket opened");
+//                final Socket client = serverSocket.accept();
+//                Log.d(LOG_TAG, "Server: connection done");
+//                final File f = new File(generateFilename());
+//                final File dirs = new File(f.getParent());
+//                if (!dirs.exists())
+//                    dirs.mkdirs();
+//                f.createNewFile();
+//                Log.d(LOG_TAG, "Server: copying files " + f.toString());
+//                final InputStream inputstream = client.getInputStream();
+//                copyFile(inputstream, new FileOutputStream(f));
+//                serverSocket.close();
+//                return f.getAbsolutePath();
+//            } catch (IOException e) {
+//                Log.e(LOG_TAG, e.getMessage(), e);
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            if (result == null) {
+//                Log.w(LOG_TAG, "onPostExecute() result is null!");
+//                return;
+//            }
+//            statusText.setText(context.getString(R.string.file_copied_successfully, result));
+//            final Intent intent = new Intent();
+//            intent.setAction(Intent.ACTION_VIEW);
+//            final Uri imgUri = Uri.parse("file://" + result);
+//            intent.setDataAndType(imgUri, IMAGE_MIME_TYPE);
+//            context.startActivity(intent);
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            statusText.setText(R.string.opening_server_socket);
+//        }
+//
+//        protected String generateFilename() {
+//            final Locale locale = context.getResources().getConfiguration().locale;
+//            return String.format(locale,
+//                    "%s/%s/%s-%d%s",
+//                    Environment.getExternalStorageDirectory(),
+//                    context.getPackageName(),
+//                    IMAGE_FILENAME_PREFIX,
+//                    System.currentTimeMillis(),
+//                    IMAGE_FILE_EXTENSION);
+//        }
+//    }
 
     public static boolean copyFile(InputStream inputStream, OutputStream out) {
         final int bufSize = 1024;
