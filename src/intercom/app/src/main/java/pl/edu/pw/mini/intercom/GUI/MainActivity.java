@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom;
+package pl.edu.pw.mini.intercom.GUI;
 
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
@@ -22,6 +22,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.connection.WiFiDirectBroadcastReceiver;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity
     private void clearDetails() {
         final DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
         if (fragmentDetails != null) {
-            fragmentDetails.resetViews();
+            fragmentDetails.clearViews();
         }
     }
 
@@ -172,7 +175,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void disconnect() {
         final DeviceDetailFragment fragment = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
-        fragment.resetViews();
+        fragment.clearViews();
         manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
 
             @Override

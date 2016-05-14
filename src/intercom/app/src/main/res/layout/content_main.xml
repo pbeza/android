@@ -25,14 +25,14 @@
 
         <fragment
             android:id="@+id/frag_list"
-            class="pl.edu.pw.mini.intercom.DeviceListFragment"
+            class="pl.edu.pw.mini.intercom.GUI.DeviceListFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_row_devices" />
 
         <fragment
             android:id="@+id/frag_detail"
-            class="pl.edu.pw.mini.intercom.DeviceDetailFragment"
+            class="pl.edu.pw.mini.intercom.GUI.DeviceDetailFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_device_detail" />

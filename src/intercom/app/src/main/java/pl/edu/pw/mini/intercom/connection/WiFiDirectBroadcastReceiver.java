@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom;
+package pl.edu.pw.mini.intercom.connection;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +10,11 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+
+import pl.edu.pw.mini.intercom.GUI.DeviceDetailFragment;
+import pl.edu.pw.mini.intercom.GUI.DeviceListFragment;
+import pl.edu.pw.mini.intercom.GUI.MainActivity;
+import pl.edu.pw.mini.intercom.R;
 
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="pl.edu.pw.mini.intercom">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="pl.edu.pw.mini.intercom">
 
     <!--<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="23" />-->
 
@@ -17,11 +18,15 @@
 
     <!-- List of all available features: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#features-reference -->
 
-    <uses-feature android:name="android.hardware.wifi.direct" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.wifi.direct"
+        android:required="true" />
 
     <!-- Used for transferring files  after a successful connection -->
 
-    <service android:name=".FileTransferService" android:enabled="true" />
+    <service
+        android:name=".FileTransferService"
+        android:enabled="true" />
 
     <application
         android:allowBackup="true"
@@ -30,7 +35,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".GUI.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -39,8 +44,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".FileTransferService" android:exported="false" />
-        <service android:name=".EchoService" android:exported="false" />
+        <service
+            android:name=".connection.FileTransferService"
+            android:exported="false" />
+        <service
+            android:name=".connection.EchoService"
+            android:exported="false" />
     </application>
 
 </manifest>

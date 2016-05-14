@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom;
+package pl.edu.pw.mini.intercom.GUI;
 
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
+
+import pl.edu.pw.mini.intercom.R;
 
 public class WiFiPeerListAdapter extends RecyclerView.Adapter<WiFiPeerListAdapter.ViewHolder> {
 

@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom;
+package pl.edu.pw.mini.intercom.GUI;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pl.edu.pw.mini.intercom.R;
 
 public class DeviceListFragment extends Fragment implements PeerListListener {
 
