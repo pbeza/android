@@ -43,10 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".connection.FileTransferService"
-            android:exported="false" />
         <service
             android:name=".connection.EchoService"
             android:exported="false" />

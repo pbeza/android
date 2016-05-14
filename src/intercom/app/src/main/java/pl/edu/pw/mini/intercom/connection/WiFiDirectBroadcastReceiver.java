@@ -33,16 +33,21 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            stateChangedAction(intent);
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-            peersChangedAction(intent);
-        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-            connectionChangedAction(intent);
-        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            thisDeviceChangedAction(intent);
-        } else {
-            Log.w(LOG_TAG, "Unexpected action: " + action);
+        switch (action) {
+            case WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION:
+                stateChangedAction(intent);
+                break;
+            case WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION:
+                peersChangedAction(intent);
+                break;
+            case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION:
+                connectionChangedAction(intent);
+                break;
+            case WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION:
+                thisDeviceChangedAction(intent);
+                break;
+            default:
+                Log.w(LOG_TAG, "Unexpected action: " + action);
         }
     }
 
