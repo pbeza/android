@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Intercom</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Ustawienia WiFi</string>
+    <string name="connect_peer_button">Połącz</string>
+    <string name="disconnect_peer_button">Rozłącz</string>
+    <string name="get_file_button">Galeria</string>
+    <string name="empty"></string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="client_text">To urządzenie jest klientem. Wybierz przycisk galerii, aby wybrać zdjęcie.</string>
+    <string name="empty_message">Nie znaleziono żadnych urządzeń. Włącz P2P i spróbuj ponownie.</string>
+    <string name="p2p_off_warning">Aktywuj WiFi P2P w ustawieniach powyżej</string>
+    <string name="group_owner_text">Jestem GroupOwnerem? </string>
+    <string name="label_me">To urządzenie</string>
+    <string name="label_peers">Urządzenia</string>
+    <string name="intro_message">Intro komunikat</string>
+    <string name="floating_button_snackbar_text">Zastąp to swoją akcją</string>
+    <string name="on_discovery_init_success">Rozpoczęto szukanie urządzeń</string>
+    <string name="on_discovery_init_failure">Szukanie urządzeń nie powiodło się : %d</string>
+    <string name="connection_failure">Połączenie zawiodło. Ponów.</string>
+    <string name="reconnection">Utracono połączenie. Spróbuj ponownie.</string>
+    <string name="connection_lost_permanently">Prawdopodobnie trwale stracono połączenie. Spróbuj wyłączyć i włączyć P2P.</string>
+    <string name="aborting_connection">Przerywanie połączenia</string>
+    <string name="aborting_connection_fail">Przerwanie połączenia nie powiodło się. Kod błędu: %d</string>
+    <string name="group_owner_ip">GroupOwner IP: %s</string>
+    <string name="opening_server_socket">Otwieranie socket\'a serwera</string>
+    <string name="file_copied_successfully">Z powodzeniem skopiowano plik - %s</string>
+    <string name="press_back_to_cancel">Cofnij aby anulować</string>
+    <string name="connecting_to_device">Łączenie do: %s</string>
+    <string name="sending_file">Wysyłanie: %s</string>
+    <string name="gallery">Galeria</string>
+    <string name="slideshow">Pokaz slajdów</string>
+    <string name="tools">Narzędzia</string>
+    <string name="communicate">Komunikacja</string>
+    <string name="share">Share</string>
+    <string name="send">Wyślij</string>
+    <string name="import_to_file">Importuj</string>
+    <string name="email_address">android.studio@android.com</string>
+    <string name="no_peers_found">Nie znaleziono żadnych urządzeń</string>
+    <string name="finding_peers">Szukanie urządzeń P2P</string>
+</resources>

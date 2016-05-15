@@ -26,7 +26,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import pl.edu.pw.mini.intercom.R;
-import pl.edu.pw.mini.intercom.connection.EchoService;
+import pl.edu.pw.mini.intercom.connection.p2p.DeviceActionListener;
+import pl.edu.pw.mini.intercom.connection.socket.EchoService;
 
 public class DeviceDetailFragment extends Fragment implements WifiP2pManager.ConnectionInfoListener {
 
@@ -61,14 +62,14 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 //                            }
 //                        }
             );
-            ((DeviceListFragment.DeviceActionListener) getActivity()).connect(config);
+            ((DeviceActionListener) getActivity()).connect(config);
         }
     }
 
     private class DisconnectOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            ((DeviceListFragment.DeviceActionListener) getActivity()).disconnect();
+            ((DeviceActionListener) getActivity()).disconnect();
         }
     }
 

@@ -5,13 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,18 +24,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import pl.edu.pw.mini.intercom.R;
-import pl.edu.pw.mini.intercom.connection.WiFiDirectBroadcastReceiver;
+import pl.edu.pw.mini.intercom.connection.p2p.DeviceActionListener;
+import pl.edu.pw.mini.intercom.connection.p2p.WiFiDirectBroadcastReceiver;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, WifiP2pManager.ChannelListener, DeviceListFragment.DeviceActionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, WifiP2pManager.ChannelListener, DeviceActionListener {
 
     private static final String LOG_TAG = "MainActivity";
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver;
-    private boolean isWifiP2pEnabled = false;
-    private boolean retryChannel = false;
+    private boolean isWifiP2pEnabled = false, retryChannel = false;
     private FragmentManager fragmentManager;
 
     public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
@@ -44,33 +44,31 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*** GUI related initialization ***/
+        // GUI related initialization
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*** Not GUI related initialization ***/
+        // Not GUI related initialization
 
         fragmentManager = getFragmentManager();
         addActionsToIntentFilter();
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = manager.initialize(this, getMainLooper(), null);
+        channel = manager.initialize(this, getMainLooper(), this);
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         discoverPeers();
     }
 
     private void addActionsToIntentFilter() {
-        final String[] actions = {
+        String[] actions = {
                 WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION,
                 WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION,
                 WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION,
@@ -90,7 +88,31 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(receiver);
+        unregisterReceiver(receiver); // TODO possibly better use static receiver within AndroidManifest.xml
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // See configChanges tag in AndroidManifest.xml to learn more
+        String orientation;
+        switch (newConfig.orientation) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                orientation = "landscape";
+                break;
+            case Configuration.ORIENTATION_PORTRAIT:
+                orientation = "portrait";
+                break;
+            default:
+                orientation = "unknown";
+        }
+        String msg = String.format("Probably screen orientation has changed to %1$s mode", orientation);
+        Log.d(LOG_TAG, msg);
     }
 
     public void clearViews() {
@@ -99,36 +121,38 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void clearPeers() {
-        final DeviceListFragment fragmentList = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
+        DeviceListFragment fragmentList = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
         if (fragmentList != null) {
             fragmentList.clearPeers();
         }
     }
 
     private void clearDetails() {
-        final DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
+        DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
         if (fragmentDetails != null) {
             fragmentDetails.clearViews();
         }
     }
 
-    public void showWirelessSettings(View v) {
+    public boolean showWirelessSettings(MenuItem item) {
         if (manager != null && channel != null) {
             // Since this is the system wireless settings activity, it's not going to send us a
             // result. We will be notified by WiFiDeviceBroadcastReceiver instead.
-            final Intent wirelessSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+            Intent wirelessSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
             startActivity(wirelessSettings);
         } else {
             Log.e(LOG_TAG, "Channel or manager is null");
         }
+        return true;
     }
 
-    public void enableDiscovery(View v) {
+    public void discoverPeers(View v) {
         if (!isWifiP2pEnabled) {
             Toast.makeText(MainActivity.this, R.string.p2p_off_warning, Toast.LENGTH_SHORT).show();
+//            Snackbar.make(view, R.string.floating_button_snackbar_text, Snackbar.LENGTH_LONG).setAction("Action", null).show();
             return;
         }
-        final DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
+        DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
         fragment.onInitiateDiscovery();
         discoverPeers();
     }
@@ -151,7 +175,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void showDetails(WifiP2pDevice device) {
-        final DeviceDetailFragment fragment = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
+        DeviceDetailFragment fragment = (DeviceDetailFragment) fragmentManager.findFragmentById(R.id.frag_detail);
         fragment.showDetails(device);
     }
 
@@ -210,8 +234,8 @@ public class MainActivity extends AppCompatActivity
         if (manager == null) {
             return;
         }
-        final DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
-        final WifiP2pDevice device = fragment.getDevice();
+        DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
+        WifiP2pDevice device = fragment.getDevice();
         if (device == null || device.status == WifiP2pDevice.CONNECTED) {
             disconnect();
         } else if (device.status == WifiP2pDevice.AVAILABLE || device.status == WifiP2pDevice.INVITED) {
@@ -236,7 +260,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -252,9 +276,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will automatically handle clicks on
+        // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -268,26 +291,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id) {
+            case R.id.nav_camera:
+                break;
+            case R.id.nav_gallery:
+                break;
+            case R.id.nav_slideshow:
+                break;
+            case R.id.nav_manage:
+                break;
+            case R.id.nav_share:
+                break;
+            case R.id.nav_send:
+                break;
+            default:
+                Log.e(LOG_TAG, "Unrecognized itemId in onNavigationItemSelected");
         }
-
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public void floatingActionButtonClicked(View view) {
-        Snackbar.make(view, R.string.floating_button_snackbar_text, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 }

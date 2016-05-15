@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.connection;
+package pl.edu.pw.mini.intercom.connection.socket;
 
 import android.app.Service;
 import android.content.Context;
@@ -39,7 +39,7 @@ public class EchoService extends Service {
     private final static boolean ALLOW_REBIND = false;
     private final IBinder echoServiceBinder = new EchoServiceBinder();
     private final AudioConfig audioConfig = new AudioConfig();
-    private ConnectionAsyncTask connectionAsyncTask;
+    private SocketConnectionAsyncTask socketConnectionAsyncTask;
     private Messenger outMessenger;
 //    private boolean
 //            isSpeaker = false,
@@ -145,8 +145,8 @@ public class EchoService extends Service {
 
     private void startSocketConnection(IntentExtraParams intentExtraParams) {
         // We are already connected with peer via WiFi peer2peer, so that we can open socket connection
-        connectionAsyncTask = new ConnectionAsyncTask(audioConfig, intentExtraParams.amIGroupOwner, intentExtraParams.serverHost);
-        connectionAsyncTask.execute(); // TODO close socket connection with client elsewhere
+        socketConnectionAsyncTask = new SocketConnectionAsyncTask(audioConfig, intentExtraParams.amIGroupOwner, intentExtraParams.serverHost);
+        socketConnectionAsyncTask.execute(); // TODO close socket connection with client elsewhere
     }
 
     @Nullable

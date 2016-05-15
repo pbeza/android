@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.connection;
+package pl.edu.pw.mini.intercom.connection.socket;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,7 +10,7 @@ import java.net.Socket;
 
 import pl.edu.pw.mini.intercom.audio.AudioConfig;
 
-public class ConnectionAsyncTask extends AsyncTask<Void, Void, Socket> {
+public class SocketConnectionAsyncTask extends AsyncTask<Void, Void, Socket> {
 
     private static final String LOG_TAG = "ConnectionManagerAsync";
     protected final static int
@@ -21,7 +21,7 @@ public class ConnectionAsyncTask extends AsyncTask<Void, Void, Socket> {
     protected final boolean amIGroupOwner;
     protected final String serverHost;
 
-    public ConnectionAsyncTask(AudioConfig audioConfig, boolean amIGroupOwner, String serverHost) {
+    public SocketConnectionAsyncTask(AudioConfig audioConfig, boolean amIGroupOwner, String serverHost) {
         this.audioConfig = audioConfig;
         this.amIGroupOwner = amIGroupOwner;
         this.serverHost = serverHost;

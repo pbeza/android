@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.connection;
+package pl.edu.pw.mini.intercom.connection.p2p;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

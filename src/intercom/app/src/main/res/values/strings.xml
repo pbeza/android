@@ -2,7 +2,7 @@
     <string name="app_name">Intercom</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">WiFi settings</string>
     <string name="connect_peer_button">Connect</string>
     <string name="disconnect_peer_button">Disconnect</string>
     <string name="get_file_button">Launch Gallery</string>
@@ -24,7 +24,7 @@
     <string name="connection_lost_permanently">Severe! Channel is probably lost permanently. Try Disable/Re-Enable P2P.</string>
     <string name="aborting_connection">Aborting connection</string>
     <string name="aborting_connection_fail">Connect abort request failed. Reason code: %d</string>
-    <string name="group_owner_ip">Group Owner IP: %s</string>
+    <string name="group_owner_ip">GroupOwner IP: %s</string>
     <string name="opening_server_socket">Opening a server socket</string>
     <string name="file_copied_successfully">File copied successfully - %s</string>
     <string name="press_back_to_cancel">Press back to cancel</string>

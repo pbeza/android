@@ -3,7 +3,6 @@ package pl.edu.pw.mini.intercom.GUI;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
@@ -22,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.connection.p2p.DeviceActionListener;
 
 public class DeviceListFragment extends Fragment implements PeerListListener {
 
-    private static final String LOG_TAG = "DeviceListFragment";
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
+    private static final String LOG_TAG = "DeviceListFragment", KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private static final LayoutManagerType DEFAULT_LAYOUT_MANAGER_TYPE = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
 
@@ -62,13 +61,11 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         rootView = inflater.inflate(R.layout.device_list, container, false);
         //rootView.setTag(LOG_TAG);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         if (savedInstanceState != null) {
-            // Restore saved layout manager type
             currentLayoutManagerType = (LayoutManagerType) savedInstanceState.getSerializable(KEY_LAYOUT_MANAGER);
         }
         setRecyclerViewLayoutManager(currentLayoutManagerType);
@@ -79,7 +76,7 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
 
     private void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
         int scrollPosition = 0;
-        final RecyclerView.LayoutManager l = recyclerView.getLayoutManager();
+        RecyclerView.LayoutManager l = recyclerView.getLayoutManager();
 
         if (l != null) {
             scrollPosition = ((LinearLayoutManager) l).findFirstCompletelyVisibleItemPosition();
@@ -160,15 +157,5 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
                 Log.d(LOG_TAG, "Finding peers cancelled");
             }
         });
-    }
-
-    public interface DeviceActionListener {
-        void showDetails(WifiP2pDevice device);
-
-        void cancelDisconnect();
-
-        void connect(WifiP2pConfig config);
-
-        void disconnect();
     }
 }

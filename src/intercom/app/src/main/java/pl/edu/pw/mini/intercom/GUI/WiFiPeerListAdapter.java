@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.intercom.GUI;
 
+import android.content.Context;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,7 +25,8 @@ public class WiFiPeerListAdapter extends RecyclerView.Adapter<WiFiPeerListAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_row_devices, parent, false);
+        final Context context = parent.getContext();
+        final LinearLayout v = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.fragment_row_devices, parent, false);
         return new ViewHolder(v, listener);
     }
 

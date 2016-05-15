@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.connection;
+package pl.edu.pw.mini.intercom.connection.socket;
 
 import android.util.Log;
 
