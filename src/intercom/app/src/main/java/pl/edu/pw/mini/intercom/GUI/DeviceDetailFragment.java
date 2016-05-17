@@ -110,6 +110,13 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Activity activity = getActivity();
+        activity.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         contentView = inflater.inflate(R.layout.fragment_device_detail, null);
@@ -157,7 +164,6 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 
         if (!isServiceStarted) {
             Activity activity = getActivity();
-            assert activity != null;
             activity.setVolumeControlStream(AudioManager.MODE_IN_COMMUNICATION);
             EchoService.startEchoService(activity, info.isGroupOwner, info.groupOwnerAddress.getHostAddress());
             isServiceStarted = true;

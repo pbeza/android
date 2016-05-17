@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -25,12 +24,22 @@
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/discoverPeersFloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="@dimen/discoverPeersFloatingActionButton_margin"
         android:src="@drawable/ic_speaker_phone_black_24dp"
         android:onClick="discoverPeers" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/muteFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_volume_up_black_24dp"
+        android:layout_gravity="top|end"
+        android:onClick="muteVolume"
+        app:layout_anchor="@id/discoverPeersFloatingActionButton"
+        app:layout_anchorGravity="top" />
 
 </android.support.design.widget.CoordinatorLayout>

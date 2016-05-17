@@ -29,17 +29,16 @@ public class EchoService extends Service {
     public final static String EXTRAS_MESSENGER_PARAM = PACKAGE_PREFIX + "Messenger";
     private static final int
             AUDIO_TRACK_MODE = AudioTrack.MODE_STREAM,
-            AUDIO_RECORD_SAMPLE_RATE_IN_HZ = 32000,
+            AUDIO_RECORD_SAMPLE_RATE_IN_HZ = 16000,
             AUDIO_TRACK_SAMPLE_RATE_IN_HZ = AUDIO_RECORD_SAMPLE_RATE_IN_HZ,
             IN_CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO,
             OUT_CHANNEL_CONFIG = AudioFormat.CHANNEL_OUT_MONO,
-            IN_AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT, // TODO switch to 8BIT as suggested in docs
+            IN_AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT,
             OUT_AUDIO_FORMAT = IN_AUDIO_FORMAT,
             AUDIO_MANAGER_COMMUNICATION_MODE = AudioManager.MODE_IN_COMMUNICATION;
     private final static boolean ALLOW_REBIND = false;
     private final IBinder echoServiceBinder = new EchoServiceBinder();
     private final AudioConfig audioConfig = new AudioConfig();
-    private SocketConnectionAsyncTask socketConnectionAsyncTask;
     private Messenger outMessenger;
 //    private boolean
 //            isSpeaker = false,
@@ -56,11 +55,11 @@ public class EchoService extends Service {
         public String serverHost;
     }
 
-    public static void startEchoService(Context context, boolean isGroupOwner, String groupOwnerAddr) {
+    public static void startEchoService(Context context, boolean isGroupOwner, String groupOwnerHost) {
         Intent intent = new Intent(context, EchoService.class);
         intent.setAction(ACTION_START_ECHO_INTENT);
         intent.putExtra(EXTRAS_AM_I_GROUP_OWNER, isGroupOwner);
-        intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, groupOwnerAddr);
+        intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, groupOwnerHost);
         context.startService(intent);
     }
 
@@ -72,12 +71,15 @@ public class EchoService extends Service {
 
     @Override
     public void onCreate() {
+        // TODO add somewhere audioConfig.audioRecord.release() and other releases
+        // TODO adjust optimal audio parameters (sample rate, buffers length etc.)
         audioConfig.minAudioRecordBufferInBytes = AudioRecord.getMinBufferSize(AUDIO_RECORD_SAMPLE_RATE_IN_HZ, IN_CHANNEL_CONFIG, IN_AUDIO_FORMAT);
         audioConfig.audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, AUDIO_RECORD_SAMPLE_RATE_IN_HZ, IN_CHANNEL_CONFIG, IN_AUDIO_FORMAT, audioConfig.minAudioRecordBufferInBytes);
         int minAudioTrackBufferInBytes = AudioTrack.getMinBufferSize(AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT);
         audioConfig.audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT, minAudioTrackBufferInBytes, AUDIO_TRACK_MODE);
         audioConfig.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioConfig.audioManager.setMode(AUDIO_MANAGER_COMMUNICATION_MODE);
+//        audioConfig.audioFormat = new AudioFormat(AUDIO_RECORD_SAMPLE_RATE_IN_HZ, );
     }
 
     @Override
@@ -145,8 +147,10 @@ public class EchoService extends Service {
 
     private void startSocketConnection(IntentExtraParams intentExtraParams) {
         // We are already connected with peer via WiFi peer2peer, so that we can open socket connection
-        socketConnectionAsyncTask = new SocketConnectionAsyncTask(audioConfig, intentExtraParams.amIGroupOwner, intentExtraParams.serverHost);
-        socketConnectionAsyncTask.execute(); // TODO close socket connection with client elsewhere
+        EchoServiceVoiceReceivingRunnable.startReceivingRunnable(intentExtraParams.amIGroupOwner, intentExtraParams.serverHost, audioConfig);
+        if (!intentExtraParams.amIGroupOwner) {
+            EchoServiceVoiceSendingRunnable.startSendingRunnable(intentExtraParams.amIGroupOwner, intentExtraParams.serverHost, audioConfig);
+        } // else start in receiving runnable when you receive first packet from client
     }
 
     @Nullable
