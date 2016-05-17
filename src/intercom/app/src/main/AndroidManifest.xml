@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.edu.pw.mini.intercom">
 
-    <!--<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="23" />-->
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="23" />
 
     <!-- List of available permissions: http://developer.android.com/reference/android/Manifest.permission.html -->
 
@@ -22,12 +24,6 @@
         android:name="android.hardware.wifi.direct"
         android:required="true" />
 
-    <!-- Used for transferring files  after a successful connection -->
-
-    <service
-        android:name=".FileTransferService"
-        android:enabled="true" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -35,7 +31,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".GUI.MainActivity"
+            android:name=".gui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|screenSize">

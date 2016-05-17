@@ -13,7 +13,7 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
 
     private static final String LOG_TAG = "VoiceReceivingRunnable";
 
-    public EchoServiceVoiceReceivingRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
+    private EchoServiceVoiceReceivingRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
         super(audioConfig, amIGroupOwner, peerHost);
     }
 
@@ -50,7 +50,7 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
         }
         final int byteOffset = 0;
         while (!stopRunnable) {
-            peerSocket.receive(packet);
+            peerSocket.receive(packet); // blocking operation
             InetAddress peerAddress = packet.getAddress();
             Log.v(LOG_TAG, "Received " + packet.getLength() + " bytes from " + peerAddress.getHostAddress());
             audioConfig.audioTrack.write(packet.getData(), byteOffset, packet.getLength());
@@ -58,14 +58,19 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
     }
 
     private void startSendingRunnableOnReceivedFirstPacket(DatagramSocket peerSocket, DatagramPacket packet) throws IOException {
+        InetAddress peerAddress;
+        String hostName;
         try {
-            peerSocket.receive(packet);
+            peerSocket.setSoTimeout(0); // wait infinitely for first packet
+            Log.d(LOG_TAG, "Waiting for first packet from non-GroupOwner peer to obtain his IP address");
+            peerSocket.receive(packet); // blocking operation
+            peerAddress = packet.getAddress();
+            hostName = peerAddress.getHostName();
+            Log.d(LOG_TAG, "Received first packet from non-GroupOwner peer - his IP: " + hostName);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Didn't receive first packet", e);
             throw e;
         }
-        InetAddress peerAddress = packet.getAddress();
-        String hostName = peerAddress.getHostName();
         EchoServiceVoiceSendingRunnable.startSendingRunnable(amIGroupOwner, hostName, audioConfig);
     }
 }

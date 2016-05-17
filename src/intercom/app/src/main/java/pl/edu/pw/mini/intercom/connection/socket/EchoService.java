@@ -118,7 +118,6 @@ public class EchoService extends Service {
             boolean present = intent.hasExtra(p);
             if (!present) {
                 Log.e(LOG_TAG, "Required " + p + " intent extra param not found");
-                assert present;
             }
         }
     }
@@ -149,7 +148,7 @@ public class EchoService extends Service {
         // We are already connected with peer via WiFi peer2peer, so that we can open socket connection
         EchoServiceVoiceReceivingRunnable.startReceivingRunnable(intentExtraParams.amIGroupOwner, intentExtraParams.serverHost, audioConfig);
         if (!intentExtraParams.amIGroupOwner) {
-            EchoServiceVoiceSendingRunnable.startSendingRunnable(intentExtraParams.amIGroupOwner, intentExtraParams.serverHost, audioConfig);
+            EchoServiceVoiceSendingRunnable.startSendingRunnable(false, intentExtraParams.serverHost, audioConfig);
         } // else start in receiving runnable when you receive first packet from client
     }
 

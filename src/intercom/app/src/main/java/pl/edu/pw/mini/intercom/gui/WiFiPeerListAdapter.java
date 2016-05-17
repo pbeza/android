@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.GUI;
+package pl.edu.pw.mini.intercom.gui;
 
 import android.content.Context;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -58,7 +58,7 @@ public class WiFiPeerListAdapter extends RecyclerView.Adapter<WiFiPeerListAdapte
 
         @Override
         public String toString() {
-            return super.toString() + " '" + device.deviceAddress + deviceName.getText() + "'";
+            return device.deviceAddress + deviceName.getText() + "'";
         }
 
 //        @Override

@@ -17,22 +17,16 @@
         android:paddingRight="@dimen/horizontal_page_margin"
         android:paddingTop="@dimen/vertical_page_margin">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/intro_message"
-            style="@style/SubText" />
-
         <fragment
             android:id="@+id/frag_list"
-            class="pl.edu.pw.mini.intercom.GUI.DeviceListFragment"
+            class="pl.edu.pw.mini.intercom.gui.DeviceListFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_row_devices" />
 
         <fragment
             android:id="@+id/frag_detail"
-            class="pl.edu.pw.mini.intercom.GUI.DeviceDetailFragment"
+            class="pl.edu.pw.mini.intercom.gui.DeviceDetailFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_device_detail" />

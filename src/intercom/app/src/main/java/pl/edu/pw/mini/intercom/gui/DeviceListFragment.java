@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.GUI;
+package pl.edu.pw.mini.intercom.gui;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -108,24 +108,6 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
         return device;
     }
 
-    private static String getDeviceStatus(int deviceStatus) {
-        Log.d(LOG_TAG, "Peer status: " + deviceStatus);
-        switch (deviceStatus) {
-            case WifiP2pDevice.AVAILABLE:
-                return "Available";
-            case WifiP2pDevice.INVITED:
-                return "Invited";
-            case WifiP2pDevice.CONNECTED:
-                return "Connected";
-            case WifiP2pDevice.FAILED:
-                return "Failed";
-            case WifiP2pDevice.UNAVAILABLE:
-                return "Unavailable";
-            default:
-                return "Unknown";
-        }
-    }
-
     private class PeerItemClick implements WiFiPeerListAdapter.ViewHolder.OnItemClickListener {
 
         @Override
@@ -140,6 +122,31 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
         view.setText(device.deviceName);
         view = (TextView) rootView.findViewById(R.id.my_status);
         view.setText(getDeviceStatus(device.status));
+    }
+
+    private String getDeviceStatus(int deviceStatus) {
+        Log.d(LOG_TAG, "Peer status: " + deviceStatus);
+        int statusId;
+        switch (deviceStatus) {
+            case WifiP2pDevice.AVAILABLE:
+                statusId = R.string.available;
+                break;
+            case WifiP2pDevice.INVITED:
+                statusId = R.string.invited;
+                break;
+            case WifiP2pDevice.CONNECTED:
+                statusId = R.string.connected;
+                break;
+            case WifiP2pDevice.FAILED:
+                statusId = R.string.failed;
+                break;
+            case WifiP2pDevice.UNAVAILABLE:
+                statusId = R.string.unavailable;
+                break;
+            default:
+                statusId = R.string.unknown;
+        }
+        return getString(statusId);
     }
 
     public void clearPeers() {

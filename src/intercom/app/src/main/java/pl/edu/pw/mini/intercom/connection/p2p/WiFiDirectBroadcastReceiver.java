@@ -11,10 +11,10 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
-import pl.edu.pw.mini.intercom.GUI.DeviceDetailFragment;
-import pl.edu.pw.mini.intercom.GUI.DeviceListFragment;
-import pl.edu.pw.mini.intercom.GUI.MainActivity;
 import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.gui.DeviceDetailFragment;
+import pl.edu.pw.mini.intercom.gui.DeviceListFragment;
+import pl.edu.pw.mini.intercom.gui.MainActivity;
 
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
@@ -107,11 +107,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             Log.w(LOG_TAG, "WifiP2pManager is null");
             return;
         }
-        final WifiP2pInfo p2pInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
+        WifiP2pInfo p2pInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
         Log.v(LOG_TAG, "WiFi P2P info: " + p2pInfo.toString());
-        final WifiP2pGroup p2pGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
+        WifiP2pGroup p2pGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
         Log.v(LOG_TAG, "WiFi P2P group" + p2pGroup.toString());
-        final NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+        NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
         if (networkInfo.isConnected()) {
             final DeviceDetailFragment fragment = (DeviceDetailFragment) activity.getFragmentManager().findFragmentById(R.id.frag_detail);
             Log.d(LOG_TAG, "We are connected - requesting connection info");

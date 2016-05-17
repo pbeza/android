@@ -11,7 +11,6 @@
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_marginRight="2dp"
         android:src="@drawable/ic_wifi"
         android:contentDescription="@null"
         android:layout_marginEnd="2dp" />

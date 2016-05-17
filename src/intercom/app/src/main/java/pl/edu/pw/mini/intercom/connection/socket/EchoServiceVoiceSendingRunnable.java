@@ -14,7 +14,7 @@ public class EchoServiceVoiceSendingRunnable extends EchoServiceBaseRunnable {
 
     private static final String LOG_TAG = "RecordSendVoiceRunnable";
 
-    public EchoServiceVoiceSendingRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
+    private EchoServiceVoiceSendingRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
         super(audioConfig, amIGroupOwner, peerHost);
     }
 
@@ -50,7 +50,7 @@ public class EchoServiceVoiceSendingRunnable extends EchoServiceBaseRunnable {
             int readBytes = audioConfig.audioRecord.read(audioData, byteOffset, audioConfig.minAudioRecordBufferInBytes);
             assert readBytes != AudioRecord.ERROR_BAD_VALUE;
             DatagramPacket p = new DatagramPacket(audioData, readBytes, peerAddress, PORT);
-            peerSocket.send(p);
+            peerSocket.send(p); // carelessly sends to peer even if not listening (beauty of UDP) :)
             //audioConfig.audioTrack.write(audioData, byteOffset, readBytes); // this is blocking write (WRITE_BLOCKING)
         }
         peerSocket.close();

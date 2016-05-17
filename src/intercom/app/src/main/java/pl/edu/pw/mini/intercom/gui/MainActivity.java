@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.GUI;
+package pl.edu.pw.mini.intercom.gui;
 
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        Log.d(LOG_TAG, "Destroying MainActivity. Bye!");
         super.onDestroy();
     }
 
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public boolean showWirelessSettings(MenuItem item) {
+    public void showWirelessSettings(MenuItem menuItem) {
         if (manager != null && channel != null) {
             // Since this is the system wireless settings activity, it's not going to send us a
             // result. We will be notified by WiFiDeviceBroadcastReceiver instead.
@@ -143,7 +144,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             Log.e(LOG_TAG, "Channel or manager is null");
         }
-        return true;
     }
 
     public void discoverPeers(View v) {
@@ -310,5 +310,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void muteVolume(View view) {
+        // TODO
     }
 }

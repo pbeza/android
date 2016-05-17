@@ -1,4 +1,4 @@
-package pl.edu.pw.mini.intercom.GUI;
+package pl.edu.pw.mini.intercom.gui;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -127,16 +126,6 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // User has picked an image. Transfer it to group owner i.e peer using FileTransferService.
-        Uri uri = data.getData();
-        TextView statusText = (TextView) contentView.findViewById(R.id.status_text);
-        statusText.setText(getResources().getString(R.string.sending_file, uri));
-        Log.d(LOG_TAG, "Intent sending URI: " + uri);
-        //FileTransferService.startFileTransferService(getActivity(), uri, info);
-    }
-
-    @Override
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -210,7 +199,7 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         };
         for (int id : idsToReset) {
             TextView view = (TextView) contentView.findViewById(id);
-            view.setText(R.string.empty);
+            view.setText("");
         }
         contentView.findViewById(R.id.btn_launch_gallery).setVisibility(View.GONE);
         this.getView().setVisibility(View.GONE);
