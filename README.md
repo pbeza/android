@@ -2,21 +2,20 @@
 
 ### Temat projektu ###
 
-[Intercom](https://en.wikipedia.org/wiki/Intercom).
+[Intercom](https://en.wikipedia.org/wiki/Intercom)
 
 ### Ustalenia ###
 
 1. Dokumentacja *musi* być napisana wyłącznie w [LaTeX](https://www.latex-project.org/)'u.
 1. Korzystamy z [Android Studio](http://developer.android.com/sdk/index.html) ([zalecane](http://stackoverflow.com/questions/1715697/what-is-the-best-ide-to-develop-android-apps-in)).
-1. [Autoformatujemy kod](http://stackoverflow.com/questions/16580171/code-formatting-shortcut-in-android-studio) przed wrzuceniem do *mastera*.
+1. [Autoformatujemy kod](http://stackoverflow.com/questions/16580171/code-formatting-shortcut-in-android-studio) przed wrzuceniem do *mastera*, porządkujemy automatycznie `import`-y i naprawiamy *code issues* znalezione przez *AndroidStudio*.
 1. Nie wrzucamy do *mastera* niedziałającego kodu.
-1. Zgodnie z [udziałem](http://developer.android.com/about/dashboards/index.html) wersji Androida w rynku, niech `android:minSdkVersion=16`, a `android:targetSdkVersion=23`.
 
 ### Dokumentacja ###
 
 Końcowy raport powinien zawierać informacje dotyczące:
 - wykorzystanych narzędzi (środowisko, biblioteki itp., w szczególności nietypowe rozwiązania),
-- podział pracy (bardzo istotna część raportu),
+- podział pracy (bardzo istotna część raportu) - można użyć [GitStats](http://stackoverflow.com/questions/1828874/generating-statistics-from-git-repository),
 - krótki opis aplikacji (bez screenów),
 - motywację oraz potencjał komercyjny aplikacji (max. 5 stron).
 
