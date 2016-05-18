@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void muteVolume(View view) {
+    public void toggleMuteVolume(View view) {
         // TODO
     }
 }

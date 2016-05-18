@@ -3,16 +3,10 @@ package pl.edu.pw.mini.intercom.connection.socket;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioRecord;
-import android.media.AudioTrack;
-import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import pl.edu.pw.mini.intercom.audio.AudioConfig;
@@ -27,22 +21,10 @@ public class EchoService extends Service {
             ACTION_START_ECHO_INTENT = PACKAGE_PREFIX + "START_ECHO",
             ACTION_STOP_ECHO_INTENT = PACKAGE_PREFIX + "STOP_ECHO";
     public final static String EXTRAS_MESSENGER_PARAM = PACKAGE_PREFIX + "Messenger";
-    private static final int
-            AUDIO_TRACK_MODE = AudioTrack.MODE_STREAM,
-            AUDIO_RECORD_SAMPLE_RATE_IN_HZ = 16000,
-            AUDIO_TRACK_SAMPLE_RATE_IN_HZ = AUDIO_RECORD_SAMPLE_RATE_IN_HZ,
-            IN_CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO,
-            OUT_CHANNEL_CONFIG = AudioFormat.CHANNEL_OUT_MONO,
-            IN_AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT,
-            OUT_AUDIO_FORMAT = IN_AUDIO_FORMAT,
-            AUDIO_MANAGER_COMMUNICATION_MODE = AudioManager.MODE_IN_COMMUNICATION;
     private final static boolean ALLOW_REBIND = false;
     private final IBinder echoServiceBinder = new EchoServiceBinder();
-    private final AudioConfig audioConfig = new AudioConfig();
+    private AudioConfig audioConfig;
     private Messenger outMessenger;
-//    private boolean
-//            isSpeaker = false,
-//            isPlaying = true;
 
     public class EchoServiceBinder extends Binder {
         public EchoService getService() {
@@ -71,15 +53,8 @@ public class EchoService extends Service {
 
     @Override
     public void onCreate() {
-        // TODO add somewhere audioConfig.audioRecord.release() and other releases
-        // TODO adjust optimal audio parameters (sample rate, buffers length etc.)
-        audioConfig.minAudioRecordBufferInBytes = AudioRecord.getMinBufferSize(AUDIO_RECORD_SAMPLE_RATE_IN_HZ, IN_CHANNEL_CONFIG, IN_AUDIO_FORMAT);
-        audioConfig.audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, AUDIO_RECORD_SAMPLE_RATE_IN_HZ, IN_CHANNEL_CONFIG, IN_AUDIO_FORMAT, audioConfig.minAudioRecordBufferInBytes);
-        int minAudioTrackBufferInBytes = AudioTrack.getMinBufferSize(AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT);
-        audioConfig.audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT, minAudioTrackBufferInBytes, AUDIO_TRACK_MODE);
-        audioConfig.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        audioConfig.audioManager.setMode(AUDIO_MANAGER_COMMUNICATION_MODE);
-//        audioConfig.audioFormat = new AudioFormat(AUDIO_RECORD_SAMPLE_RATE_IN_HZ, );
+        Context context = getApplicationContext();
+        audioConfig = new AudioConfig(context);
     }
 
     @Override
@@ -152,7 +127,6 @@ public class EchoService extends Service {
         } // else start in receiving runnable when you receive first packet from client
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -169,28 +143,6 @@ public class EchoService extends Service {
         return ALLOW_REBIND;
     }
 
-//    public boolean toggleSpeakerphone() {
-//        isSpeaker = !isSpeaker;
-//        audioConfig.audioManager.setSpeakerphoneOn(isSpeaker);
-//        return isSpeaker;
-//    }
-//
-//    public boolean toggleRecording() {
-//        isPlaying = !isPlaying;
-//        if (isPlaying) {
-//            audioConfig.audioRecord.startRecording();
-//            audioConfig.audioTrack.play();
-//        } else {
-//            audioConfig.audioRecord.stop();
-//            audioConfig.audioTrack.pause();
-//        }
-//        return isPlaying;
-//    }
-//
-//    public boolean isSpeakerphoneModeOn() {
-//        return isSpeaker;
-//    }
-//
 //    @Override
 //    public void onRebind(Intent intent) {
 //        // A client is binding to the service with bindService() after onUnbind() has already been called

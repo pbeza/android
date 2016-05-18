@@ -1,6 +1,5 @@
 package pl.edu.pw.mini.intercom.connection.socket;
 
-import android.media.AudioRecord;
 import android.util.Log;
 
 import java.io.IOException;
@@ -36,22 +35,22 @@ public class EchoServiceVoiceSendingRunnable extends EchoServiceBaseRunnable {
     }
 
     private void sendVoiceToPeer() throws IOException {
-        byte[] audioData = new byte[audioConfig.minAudioRecordBufferInBytes];
+        final int audioRecordBufferInBytes = audioConfig.getAudioRecordBufferInBytes();
+        byte[] audioData = new byte[audioRecordBufferInBytes];
         DatagramSocket peerSocket = new DatagramSocket();
         InetAddress peerAddress = InetAddress.getByName(peerHost);
         try {
-            audioConfig.audioRecord.startRecording();
+            audioConfig.startRecording();
         } catch (IllegalStateException e) {
+            audioConfig.release();
             Log.d(LOG_TAG, "audioRecord.startRecording() has failed", e);
             throw e;
         }
-        final int byteOffset = 0;
         while (!stopRunnable) {
-            int readBytes = audioConfig.audioRecord.read(audioData, byteOffset, audioConfig.minAudioRecordBufferInBytes);
-            assert readBytes != AudioRecord.ERROR_BAD_VALUE;
+            int readBytes = audioConfig.read(audioData);
             DatagramPacket p = new DatagramPacket(audioData, readBytes, peerAddress, PORT);
             peerSocket.send(p); // carelessly sends to peer even if not listening (beauty of UDP) :)
-            //audioConfig.audioTrack.write(audioData, byteOffset, readBytes); // this is blocking write (WRITE_BLOCKING)
+            //audioConfig.write(audioData, byteOffset, readBytes); // uncomment to hear your voice in speaker
         }
         peerSocket.close();
     }

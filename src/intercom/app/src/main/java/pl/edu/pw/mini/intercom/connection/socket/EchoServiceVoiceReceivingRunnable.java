@@ -35,25 +35,24 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
     }
 
     private void receiveVoiceFromPeer() throws IOException {
-        byte[] audioData = new byte[audioConfig.minAudioRecordBufferInBytes];
+        final int audioRecordBufferInBytes = audioConfig.getAudioRecordBufferInBytes();
+        byte[] audioData = new byte[audioRecordBufferInBytes];
         DatagramSocket peerSocket = new DatagramSocket(PORT);
-        // TODO possibly one more thread reading received, buffered audio would be better
         DatagramPacket packet = new DatagramPacket(audioData, audioData.length);
         if (amIGroupOwner) {
             startSendingRunnableOnReceivedFirstPacket(peerSocket, packet);
         }
         try {
-            audioConfig.audioTrack.play(); // TODO probably need to synchronize parallel access
+            audioConfig.startPlaying();
         } catch (IllegalStateException e) {
-            Log.d(LOG_TAG, "audioTrack.play() has failed", e);
+            Log.d(LOG_TAG, "audioTrack.startPlaying() has failed", e);
             throw e;
         }
-        final int byteOffset = 0;
         while (!stopRunnable) {
             peerSocket.receive(packet); // blocking operation
             InetAddress peerAddress = packet.getAddress();
             Log.v(LOG_TAG, "Received " + packet.getLength() + " bytes from " + peerAddress.getHostAddress());
-            audioConfig.audioTrack.write(packet.getData(), byteOffset, packet.getLength());
+            audioConfig.write(packet);
         }
     }
 

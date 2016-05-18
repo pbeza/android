@@ -3,10 +3,6 @@ package pl.edu.pw.mini.intercom.gui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -15,9 +11,7 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +25,11 @@ import pl.edu.pw.mini.intercom.connection.socket.EchoService;
 public class DeviceDetailFragment extends Fragment implements WifiP2pManager.ConnectionInfoListener {
 
     private static final String LOG_TAG = "DeviceDetailFragment";
-    private View contentView = null;
+    private View contentView;
     private WifiP2pDevice device;
-    private ProgressDialog progressDialog = null;
-    private EchoService echoService;
-    private final ServiceConnection serviceConnection = new EchoServiceConnection();
+    private ProgressDialog progressDialog;
+//    private EchoService echoService;
+//    private final ServiceConnection serviceConnection = new EchoServiceConnection();
     private final Handler msgQueueHandler = new EchoHandler();
     private boolean isServiceStarted = false;
 
@@ -49,8 +43,8 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
                 progressDialog.dismiss();
             }
             progressDialog = ProgressDialog.show(getActivity(),
-                    getResources().getString(R.string.press_back_to_cancel),
-                    getResources().getString(R.string.connecting_to_device, device.deviceAddress),
+                    getString(R.string.press_back_to_cancel),
+                    getString(R.string.connecting_to_device, device.deviceAddress),
                     true,
                     true
 //                        new DialogInterface.OnCancelListener() {
@@ -72,18 +66,6 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         }
     }
 
-    private class EchoServiceConnection implements ServiceConnection {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder binder) {
-            echoService = ((EchoService.EchoServiceBinder) binder).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            echoService = null;
-        }
-    }
-
     private static class EchoHandler extends Handler {
         public void handleMessage(Message message) {
             Bundle data = message.getData();
@@ -92,19 +74,18 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 
     @Override
     public void onResume() {
-        if (echoService == null) {
-            doBindService();
-        }
+//        if (echoService == null) {
+//            doBindService();
+//        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        // FIXME put back (?)
-        if (echoService != null) {
-            getActivity().getApplicationContext().unbindService(serviceConnection);
-            echoService = null;
-        }
+//        if (echoService != null) {
+//            getActivity().getApplicationContext().unbindService(serviceConnection);
+//            echoService = null;
+//        }
         super.onPause();
     }
 
@@ -121,7 +102,6 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         contentView = inflater.inflate(R.layout.fragment_device_detail, null);
         contentView.findViewById(R.id.btn_connect).setOnClickListener(new ConnectOnClickListener());
         contentView.findViewById(R.id.btn_disconnect).setOnClickListener(new DisconnectOnClickListener());
-//        contentView.findViewById(R.id.btn_launch_gallery).setOnClickListener(new LaunchGalleryOnClickListener());
         return contentView;
     }
 
@@ -135,12 +115,12 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         fragmentView.setVisibility(View.VISIBLE);
 
         TextView view = (TextView) contentView.findViewById(R.id.group_owner);
-        String amIGroupOwner = info.isGroupOwner ? getResources().getString(R.string.yes) : getResources().getString(R.string.no);
-        String groupOwnerText = getResources().getString(R.string.group_owner_text) + amIGroupOwner;
+        String amIGroupOwner = info.isGroupOwner ? getString(R.string.yes) : getString(R.string.no);
+        String groupOwnerText = getString(R.string.group_owner_text) + amIGroupOwner;
         view.setText(groupOwnerText);
 
         view = (TextView) contentView.findViewById(R.id.device_info);
-        String groupOwnerIP = getResources().getString(R.string.group_owner_ip, info.groupOwnerAddress.getHostAddress());
+        String groupOwnerIP = getString(R.string.group_owner_ip, info.groupOwnerAddress.getHostAddress());
         view.setText(groupOwnerIP);
 
         // After the group negotiation, we assign the group owner as the file server.
@@ -165,20 +145,20 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
             // The other device acts as the client. In this case, we enable the get file button.
             contentView.findViewById(R.id.btn_launch_gallery).setVisibility(View.VISIBLE);
             TextView statusTextView = (TextView) contentView.findViewById(R.id.status_text);
-            statusTextView.setText(getResources().getString(R.string.client_text));
+            statusTextView.setText(getString(R.string.client_text));
         }
         */
         contentView.findViewById(R.id.btn_connect).setVisibility(View.GONE);
     }
 
-    private void doBindService() {
-        Intent intent = new Intent(this.getActivity(), EchoService.class);
-        // Create a new Messenger for the communication back from the Service to the Activity
-        Messenger messenger = new Messenger(msgQueueHandler);
-        intent.putExtra(EchoService.EXTRAS_MESSENGER_PARAM, messenger);
-//        intent.setAction(EchoService.ACTION_START_ECHO_PARAM);
-        getActivity().getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
+//    private void doBindService() {
+//        Intent intent = new Intent(this.getActivity(), EchoService.class);
+//        // Create a new Messenger for the communication back from the Service to the Activity
+//        Messenger messenger = new Messenger(msgQueueHandler);
+//        intent.putExtra(EchoService.EXTRAS_MESSENGER_PARAM, messenger);
+////        intent.setAction(EchoService.ACTION_START_ECHO_PARAM);
+//        getActivity().getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+//    }
 
     public void showDetails(WifiP2pDevice device) {
         this.device = device;

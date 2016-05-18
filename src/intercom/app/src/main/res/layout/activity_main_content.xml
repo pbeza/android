@@ -21,7 +21,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/activity_main_scroll_view" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/discoverPeersFloatingActionButton"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/discoverPeersFloatingActionButton_margin"
-        android:src="@drawable/ic_speaker_phone_black_24dp"
+        android:src="@drawable/ic_radar"
         android:onClick="discoverPeers" />
 
     <android.support.design.widget.FloatingActionButton
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_volume_up_black_24dp"
         android:layout_gravity="top|end"
-        android:onClick="muteVolume"
+        android:onClick="toggleMuteVolume"
         app:layout_anchor="@id/discoverPeersFloatingActionButton"
         app:layout_anchorGravity="top" />
 
