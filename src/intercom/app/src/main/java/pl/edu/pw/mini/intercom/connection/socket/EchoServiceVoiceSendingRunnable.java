@@ -7,18 +7,16 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import pl.edu.pw.mini.intercom.audio.AudioConfig;
-
 public class EchoServiceVoiceSendingRunnable extends EchoServiceBaseRunnable {
 
     private static final String LOG_TAG = "RecordSendVoiceRunnable";
 
-    private EchoServiceVoiceSendingRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
-        super(audioConfig, amIGroupOwner, peerHost);
+    private EchoServiceVoiceSendingRunnable(boolean amIGroupOwner, String peerHost) {
+        super(amIGroupOwner, peerHost);
     }
 
-    public static void startSendingRunnable(boolean amIGroupOwner, String serverHost, AudioConfig audioConfig) {
-        Runnable sendingRunnable = new EchoServiceVoiceSendingRunnable(audioConfig, amIGroupOwner, serverHost);
+    public static void startSendingRunnable(boolean amIGroupOwner, String serverHost) {
+        Runnable sendingRunnable = new EchoServiceVoiceSendingRunnable(amIGroupOwner, serverHost);
         startRunnable(sendingRunnable);
         Log.d(LOG_TAG, "Thread recording and sending voice to peer started successfully");
     }

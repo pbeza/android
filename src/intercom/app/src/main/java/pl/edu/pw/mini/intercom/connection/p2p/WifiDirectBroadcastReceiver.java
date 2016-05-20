@@ -16,17 +16,19 @@ import pl.edu.pw.mini.intercom.gui.DeviceDetailFragment;
 import pl.edu.pw.mini.intercom.gui.DeviceListFragment;
 import pl.edu.pw.mini.intercom.gui.MainActivity;
 
-public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
+public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private static final String LOG_TAG = "WiFiBroadcastReceiver";
     private final WifiP2pManager manager;
     private final WifiP2pManager.Channel channel;
+    private final WifiConfig wifiConfig;
     private final MainActivity activity;
     //private WifiP2pManager.PeerListListener peerListListener;
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, MainActivity activity) {
+    public WifiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, WifiConfig wifiConfig, MainActivity activity) {
         this.manager = manager;
         this.channel = channel;
+        this.wifiConfig = wifiConfig;
         this.activity = activity;
     }
 
@@ -62,10 +64,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         Log.d(LOG_TAG, "WIFI_P2P_STATE_CHANGED_ACTION, state = " + state);
         if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
             Log.d(LOG_TAG, "Wifi P2P is enabled");
-            activity.setIsWifiP2pEnabled(true);
+            wifiConfig.setIsWifiP2pEnabled(true);
         } else {
             Log.d(LOG_TAG, "WiFi P2P is not enabled");
-            activity.setIsWifiP2pEnabled(false);
+            wifiConfig.setIsWifiP2pEnabled(false);
             activity.clearViews();
         }
     }
@@ -113,7 +115,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         Log.v(LOG_TAG, "WiFi P2P group" + p2pGroup.toString());
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
         if (networkInfo.isConnected()) {
-            final DeviceDetailFragment fragment = (DeviceDetailFragment) activity.getFragmentManager().findFragmentById(R.id.frag_detail);
+            DeviceDetailFragment fragment = (DeviceDetailFragment) activity.getFragmentManager().findFragmentById(R.id.frag_detail);
             Log.d(LOG_TAG, "We are connected - requesting connection info");
             manager.requestConnectionInfo(channel, fragment);
         } else {

@@ -3,15 +3,12 @@ package pl.edu.pw.mini.intercom.gui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.media.AudioManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +16,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import pl.edu.pw.mini.intercom.R;
-import pl.edu.pw.mini.intercom.connection.p2p.DeviceActionListener;
+import pl.edu.pw.mini.intercom.config.EchoConfigApplication;
+import pl.edu.pw.mini.intercom.connection.p2p.WifiConfig;
 import pl.edu.pw.mini.intercom.connection.socket.EchoService;
 
 public class DeviceDetailFragment extends Fragment implements WifiP2pManager.ConnectionInfoListener {
@@ -28,10 +26,7 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     private View contentView;
     private WifiP2pDevice device;
     private ProgressDialog progressDialog;
-//    private EchoService echoService;
-//    private final ServiceConnection serviceConnection = new EchoServiceConnection();
-    private final Handler msgQueueHandler = new EchoHandler();
-    private boolean isServiceStarted = false;
+    private static boolean connectionEstablished = false; // FIXME temporary 'hotfix' (note it MUST be static)
 
     private class ConnectOnClickListener implements View.OnClickListener {
         @Override
@@ -55,45 +50,17 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 //                            }
 //                        }
             );
-            ((DeviceActionListener) getActivity()).connect(config);
+            WifiConfig wifiConfig = WifiConfig.getInstance();
+            wifiConfig.connect(config);
         }
     }
 
     private class DisconnectOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            ((DeviceActionListener) getActivity()).disconnect();
+            WifiConfig wifiConfig = WifiConfig.getInstance();
+            wifiConfig.disconnect();
         }
-    }
-
-    private static class EchoHandler extends Handler {
-        public void handleMessage(Message message) {
-            Bundle data = message.getData();
-        }
-    }
-
-    @Override
-    public void onResume() {
-//        if (echoService == null) {
-//            doBindService();
-//        }
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-//        if (echoService != null) {
-//            getActivity().getApplicationContext().unbindService(serviceConnection);
-//            echoService = null;
-//        }
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Activity activity = getActivity();
-        activity.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
     }
 
     @Override
@@ -113,52 +80,35 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         View fragmentView = getView();
         assert fragmentView != null;
         fragmentView.setVisibility(View.VISIBLE);
-
-        TextView view = (TextView) contentView.findViewById(R.id.group_owner);
-        String amIGroupOwner = info.isGroupOwner ? getString(R.string.yes) : getString(R.string.no);
-        String groupOwnerText = getString(R.string.group_owner_text) + amIGroupOwner;
-        view.setText(groupOwnerText);
-
-        view = (TextView) contentView.findViewById(R.id.device_info);
-        String groupOwnerIP = getString(R.string.group_owner_ip, info.groupOwnerAddress.getHostAddress());
-        view.setText(groupOwnerIP);
-
-        // After the group negotiation, we assign the group owner as the file server.
-        // The file server is single threaded, single connection server socket.
-
-        if (!info.groupFormed) {
+        setGroupOwnerText(info);
+        setDeviceInfoText(info);
+        if (info.groupFormed && !connectionEstablished) {
+            connectionEstablished = true;
+            String groupOwnerHostAddress = info.groupOwnerAddress.getHostAddress();
+            EchoService.startEchoService(getActivity());
+            Activity activity = getActivity();
+            EchoConfigApplication echoConfigApplication = (EchoConfigApplication) activity.getApplication();
+            EchoService echoService = echoConfigApplication.getEchoService();
+            echoService.startSocketConnection(info.isGroupOwner, groupOwnerHostAddress);
+            contentView.findViewById(R.id.btn_connect).setVisibility(View.GONE);
+        } else {
             Log.e(LOG_TAG, "Group was not formed");
             return;
         }
-
-        if (!isServiceStarted) {
-            Activity activity = getActivity();
-            activity.setVolumeControlStream(AudioManager.MODE_IN_COMMUNICATION);
-            EchoService.startEchoService(activity, info.isGroupOwner, info.groupOwnerAddress.getHostAddress());
-            isServiceStarted = true;
-        }
-
-        /*
-        if (info.groupFormed && info.isGroupOwner) {
-            new FileServerAsyncTask(getActivity(), contentView.findViewById(R.id.status_text)).execute();
-        } else if (info.groupFormed) {
-            // The other device acts as the client. In this case, we enable the get file button.
-            contentView.findViewById(R.id.btn_launch_gallery).setVisibility(View.VISIBLE);
-            TextView statusTextView = (TextView) contentView.findViewById(R.id.status_text);
-            statusTextView.setText(getString(R.string.client_text));
-        }
-        */
-        contentView.findViewById(R.id.btn_connect).setVisibility(View.GONE);
     }
 
-//    private void doBindService() {
-//        Intent intent = new Intent(this.getActivity(), EchoService.class);
-//        // Create a new Messenger for the communication back from the Service to the Activity
-//        Messenger messenger = new Messenger(msgQueueHandler);
-//        intent.putExtra(EchoService.EXTRAS_MESSENGER_PARAM, messenger);
-////        intent.setAction(EchoService.ACTION_START_ECHO_PARAM);
-//        getActivity().getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-//    }
+    private void setDeviceInfoText(WifiP2pInfo info) {
+        TextView view = (TextView) contentView.findViewById(R.id.device_info);
+        String groupOwnerIP = getString(R.string.group_owner_ip, info.groupOwnerAddress.getHostAddress());
+        view.setText(groupOwnerIP);
+    }
+
+    private void setGroupOwnerText(WifiP2pInfo info) {
+        TextView view = (TextView) contentView.findViewById(R.id.group_owner);
+        String amIGroupOwner = getString(info.isGroupOwner ? R.string.yes : R.string.no);
+        String groupOwnerText = getString(R.string.group_owner_text) + amIGroupOwner;
+        view.setText(groupOwnerText);
+    }
 
     public void showDetails(WifiP2pDevice device) {
         this.device = device;

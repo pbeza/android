@@ -22,7 +22,7 @@
     <string name="aborting_connection">Przerywanie połączenia</string>
     <string name="aborting_connection_fail">Przerwanie połączenia nie powiodło się. Kod błędu: %d</string>
     <string name="group_owner_ip">GroupOwner IP: %s</string>
-    <string name="press_back_to_cancel">Cofnij aby anulować</string>
+    <string name="press_back_to_cancel">Cofnij, aby anulować</string>
     <string name="connecting_to_device">Łączenie do: %s</string>
     <string name="gallery">Galeria</string>
     <string name="slideshow">Pokaz slajdów</string>

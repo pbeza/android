@@ -7,18 +7,16 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import pl.edu.pw.mini.intercom.audio.AudioConfig;
-
 public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
 
     private static final String LOG_TAG = "VoiceReceivingRunnable";
 
-    private EchoServiceVoiceReceivingRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
-        super(audioConfig, amIGroupOwner, peerHost);
+    private EchoServiceVoiceReceivingRunnable(boolean amIGroupOwner, String peerHost) {
+        super(amIGroupOwner, peerHost);
     }
 
-    public static void startReceivingRunnable(boolean amIGroupOwner, String serverHost, AudioConfig audioConfig) {
-        Runnable receivingRunnable = new EchoServiceVoiceReceivingRunnable(audioConfig, amIGroupOwner, serverHost);
+    public static void startReceivingRunnable(boolean amIGroupOwner, String serverHost) {
+        Runnable receivingRunnable = new EchoServiceVoiceReceivingRunnable(amIGroupOwner, serverHost);
         startRunnable(receivingRunnable);
         Log.d(LOG_TAG, "Thread receiving voice from peer started successfully");
     }
@@ -70,6 +68,6 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
             Log.e(LOG_TAG, "Didn't receive first packet", e);
             throw e;
         }
-        EchoServiceVoiceSendingRunnable.startSendingRunnable(amIGroupOwner, hostName, audioConfig);
+        EchoServiceVoiceSendingRunnable.startSendingRunnable(amIGroupOwner, hostName);
     }
 }

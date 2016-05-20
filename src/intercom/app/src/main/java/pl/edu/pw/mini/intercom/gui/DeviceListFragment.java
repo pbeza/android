@@ -22,6 +22,7 @@ import java.util.List;
 
 import pl.edu.pw.mini.intercom.R;
 import pl.edu.pw.mini.intercom.connection.p2p.DeviceActionListener;
+import pl.edu.pw.mini.intercom.connection.p2p.WifiConfig;
 
 public class DeviceListFragment extends Fragment implements PeerListListener {
 
@@ -56,13 +57,12 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
         }
     }
 
-    /**
+    /*
      * It's called eg. when orientation changes.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.device_list, container, false);
-        //rootView.setTag(LOG_TAG);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         if (savedInstanceState != null) {
@@ -112,7 +112,8 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
 
         @Override
         public void onClick(WifiP2pDevice device, View view) {
-            ((DeviceActionListener) getActivity()).showDetails(device);
+            WifiConfig wifiConfig = WifiConfig.getInstance();
+            wifiConfig.showDetails(device);
         }
     }
 

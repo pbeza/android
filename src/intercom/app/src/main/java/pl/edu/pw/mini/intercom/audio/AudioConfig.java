@@ -1,6 +1,5 @@
 package pl.edu.pw.mini.intercom.audio;
 
-import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -16,6 +15,7 @@ public class AudioConfig {
     // TODO adjust optimal audio parameters (sample rate, buffers length etc.)
     // TODO some method calls probably should be 'synchronized' (parallel access issues)
 
+    private static AudioConfig instance = new AudioConfig();
     public static final int
             AUDIO_TRACK_MODE = AudioTrack.MODE_STREAM,
             AUDIO_RECORD_SAMPLE_RATE_IN_HZ = 16000,
@@ -29,21 +29,29 @@ public class AudioConfig {
             VOICE_RECORDING_ON_BY_DEFAULT = true,
             VOICE_PLAYING_ON_BY_DEFAULT = true;
     private final int audioRecordBufferInBytes, audioTrackBufferInBytes;
-    private final AudioManager audioManager;
     private final AudioRecord audioRecord;
     private final AudioTrack audioTrack;
+    private AudioManager audioManager;
     private boolean
             isVoiceRecordingOn = VOICE_RECORDING_ON_BY_DEFAULT,
             isAudioTrackPlaying = VOICE_PLAYING_ON_BY_DEFAULT;
 
-    public AudioConfig(Context context) {
+    private AudioConfig() {
         int minAudioRecordBufferInBytes = AudioRecord.getMinBufferSize(AudioConfig.AUDIO_RECORD_SAMPLE_RATE_IN_HZ, IN_CHANNEL_CONFIG, IN_AUDIO_FORMAT);
         audioRecordBufferInBytes = minAudioRecordBufferInBytes;
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, AUDIO_RECORD_SAMPLE_RATE_IN_HZ, IN_CHANNEL_CONFIG, IN_AUDIO_FORMAT, audioRecordBufferInBytes);
         int minAudioTrackBufferInBytes = AudioTrack.getMinBufferSize(AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT);
         audioTrackBufferInBytes = minAudioTrackBufferInBytes;
         audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT, audioTrackBufferInBytes, AUDIO_TRACK_MODE);
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+    }
+
+    public static AudioConfig getInstance() {
+        return instance;
+    }
+
+    // TODO remove this somehow
+    public void updateAudioManagerReferences(AudioManager audioManager) {
+        this.audioManager = audioManager;
         audioManager.setMode(AUDIO_MANAGER_COMMUNICATION_MODE);
     }
 
@@ -51,9 +59,9 @@ public class AudioConfig {
         return audioRecordBufferInBytes;
     }
 
-    public int getAudioTrackBufferInBytes() {
-        return audioTrackBufferInBytes;
-    }
+//    public int getAudioTrackBufferInBytes() {
+//        return audioTrackBufferInBytes;
+//    }
 
     public void startRecording() {
         audioRecord.startRecording();
@@ -98,7 +106,13 @@ public class AudioConfig {
         final int offsetInBytes = 0;
         byte[] audioData = datagramPacket.getData();
         int sizeInBytes = datagramPacket.getLength();
-        return audioTrack.write(audioData, offsetInBytes, sizeInBytes);
+        int wroteBytes = audioTrack.write(audioData, offsetInBytes, sizeInBytes);
+        if (BuildConfig.DEBUG && (wroteBytes == AudioTrack.ERROR_INVALID_OPERATION ||
+                wroteBytes == AudioTrack.ERROR_BAD_VALUE ||
+                wroteBytes == AudioManager.ERROR_DEAD_OBJECT)) {
+            throw new AssertionError("audioTrack.write() has failed");
+        }
+        return wroteBytes;
     }
 
     public void release() {
@@ -122,20 +136,20 @@ public class AudioConfig {
         return isSpeakerphoneOn;
     }
 
-    public boolean toggleVoiceRecording() {
+    public boolean toggleRecording() {
         if (isVoiceRecordingOn) {
-            startRecording();
-        } else {
             stopRecording();
+        } else {
+            startRecording();
         }
         return isVoiceRecordingOn;
     }
 
-    public boolean toggleAudioTrackPlaying() {
+    public boolean togglePlaying() {
         if (isAudioTrackPlaying) {
-            startPlaying();
-        } else {
             pausePlaying();
+        } else {
+            startPlaying();
         }
         return isAudioTrackPlaying;
     }

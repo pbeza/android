@@ -12,8 +12,8 @@ abstract class EchoServiceBaseRunnable implements Runnable {
     final String peerHost;
     volatile boolean stopRunnable = false;
 
-    EchoServiceBaseRunnable(AudioConfig audioConfig, boolean amIGroupOwner, String peerHost) {
-        this.audioConfig = audioConfig;
+    EchoServiceBaseRunnable(boolean amIGroupOwner, String peerHost) {
+        this.audioConfig = AudioConfig.getInstance();
         this.amIGroupOwner = amIGroupOwner;
         this.peerHost = peerHost;
     }
