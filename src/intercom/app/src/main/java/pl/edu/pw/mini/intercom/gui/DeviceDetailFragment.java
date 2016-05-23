@@ -50,16 +50,18 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
 //                            }
 //                        }
             );
-            WifiConfig wifiConfig = WifiConfig.getInstance();
-            wifiConfig.connect(config);
+            MainActivity mainActivity = (MainActivity) getActivity();
+            WifiConfig wifiConfig = WifiConfig.getInstance(mainActivity);
+            wifiConfig.connect(config, mainActivity);
         }
     }
 
     private class DisconnectOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            WifiConfig wifiConfig = WifiConfig.getInstance();
-            wifiConfig.disconnect();
+            MainActivity mainActivity = (MainActivity) getActivity();
+            WifiConfig wifiConfig = WifiConfig.getInstance(mainActivity);
+            wifiConfig.disconnect(mainActivity.getFragmentManager());
         }
     }
 
@@ -85,7 +87,7 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         if (info.groupFormed && !connectionEstablished) {
             connectionEstablished = true;
             String groupOwnerHostAddress = info.groupOwnerAddress.getHostAddress();
-            EchoService.startEchoService(getActivity());
+            EchoService.startEchoService(getActivity(), info.isGroupOwner, info.groupOwnerAddress.getHostAddress());
             Activity activity = getActivity();
             EchoConfigApplication echoConfigApplication = (EchoConfigApplication) activity.getApplication();
             EchoService echoService = echoConfigApplication.getEchoService();

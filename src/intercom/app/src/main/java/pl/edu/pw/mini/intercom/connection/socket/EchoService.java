@@ -3,6 +3,7 @@ package pl.edu.pw.mini.intercom.connection.socket;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -14,12 +15,12 @@ public class EchoService extends Service {
     private final static String
             LOG_TAG = "EchoService",
             PACKAGE_PREFIX = "pl.edu.pw.mini.intercom.",
-//            EXTRAS_AM_I_GROUP_OWNER = PACKAGE_PREFIX + "AmIGroupOwner",
-//            EXTRAS_GROUP_OWNER_ADDRESS = PACKAGE_PREFIX + "GroupOwnerAddress",
-            ACTION_START_ECHO_INTENT = PACKAGE_PREFIX + "START_ECHO",
+            EXTRAS_AM_I_GROUP_OWNER = PACKAGE_PREFIX + "AmIGroupOwner",
+            EXTRAS_GROUP_OWNER_ADDRESS = PACKAGE_PREFIX + "GroupOwnerAddress",
+    ACTION_START_ECHO_INTENT = PACKAGE_PREFIX + "START_ECHO",
             ACTION_STOP_ECHO_INTENT = PACKAGE_PREFIX + "STOP_ECHO";
     private final static String[]
-            ACTION_START_ECHO_INTENT_REQUIRED_PARAMS = new String[]{/*EXTRAS_AM_I_GROUP_OWNER, EXTRAS_GROUP_OWNER_ADDRESS*/},
+            ACTION_START_ECHO_INTENT_REQUIRED_PARAMS = new String[]{ EXTRAS_AM_I_GROUP_OWNER, EXTRAS_GROUP_OWNER_ADDRESS },
             ACTION_STOP_ECHO_INTENT_REQUIRED_PARAMS = new String[]{};
     public final static String EXTRAS_MESSENGER_PARAM = PACKAGE_PREFIX + "Messenger";
     private final static boolean ALLOW_REBIND = false;
@@ -37,11 +38,11 @@ public class EchoService extends Service {
         public String serverHost;
     }
 
-    public static void startEchoService(Context context) {
+    public static void startEchoService(Context context, boolean isGroupOwner, String groupOwnerHost) {
         Intent intent = new Intent(context, EchoService.class);
         intent.setAction(ACTION_START_ECHO_INTENT);
-//        intent.putExtra(EXTRAS_AM_I_GROUP_OWNER, isGroupOwner);
-//        intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, groupOwnerHost);
+        intent.putExtra(EXTRAS_AM_I_GROUP_OWNER, isGroupOwner);
+        intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, groupOwnerHost);
         context.startService(intent);
     }
 
@@ -66,8 +67,8 @@ public class EchoService extends Service {
             Log.w(LOG_TAG, "onStartCommand intent is null");
         } else {
             assertPresenceOfAllRequiredExtraParams(intent);
-//            IntentExtraParams intentExtraParams = parseExtraParams(intent);
-            runActionBasedOnStartCommandIntent(intent/*, intentExtraParams*/);
+            IntentExtraParams intentExtraParams = parseExtraParams(intent);
+            runActionBasedOnStartCommandIntent(intent, intentExtraParams);
         }
         return START_STICKY;
     }
@@ -97,19 +98,19 @@ public class EchoService extends Service {
         }
     }
 
-//    private IntentExtraParams parseExtraParams(Intent intent) {
-//        IntentExtraParams p = new IntentExtraParams();
-//        final boolean amIGroupOwnerDefaultValue = false;
-////        p.serverHost = intent.getStringExtra(EXTRAS_GROUP_OWNER_ADDRESS);
-////        p.amIGroupOwner = intent.getBooleanExtra(EXTRAS_AM_I_GROUP_OWNER, amIGroupOwnerDefaultValue);
-//        return p;
-//    }
+    private IntentExtraParams parseExtraParams(Intent intent) {
+        IntentExtraParams p = new IntentExtraParams();
+        final boolean amIGroupOwnerDefaultValue = false;
+        p.serverHost = intent.getStringExtra(EXTRAS_GROUP_OWNER_ADDRESS);
+        p.amIGroupOwner = intent.getBooleanExtra(EXTRAS_AM_I_GROUP_OWNER, amIGroupOwnerDefaultValue);
+        return p;
+    }
 
-    private void runActionBasedOnStartCommandIntent(Intent intent/*, IntentExtraParams intentExtraParams*/) {
+    private void runActionBasedOnStartCommandIntent(Intent intent, IntentExtraParams intentExtraParams) {
         String action = intent.getAction();
         switch (action) {
             case ACTION_START_ECHO_INTENT:
-//                startSocketConnection(intentExtraParams.amIGroupOwner, intentExtraParams.serverHost);
+                startSocketConnection(intentExtraParams.amIGroupOwner, intentExtraParams.serverHost);
                 break;
             case ACTION_STOP_ECHO_INTENT:
                 break;
@@ -119,10 +120,11 @@ public class EchoService extends Service {
     }
 
     public void startSocketConnection(boolean amIGroupOwner, String serverHostAddress) {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // We are already connected with peer via WiFi peer2peer, so that we can open socket connection
-        EchoServiceVoiceReceivingRunnable.startReceivingRunnable(amIGroupOwner, serverHostAddress);
+        EchoServiceVoiceReceivingRunnable.startReceivingRunnable(audioManager, amIGroupOwner, serverHostAddress);
         if (!amIGroupOwner) {
-            EchoServiceVoiceSendingRunnable.startSendingRunnable(false, serverHostAddress);
+            EchoServiceVoiceSendingRunnable.startSendingRunnable(audioManager, false, serverHostAddress);
         } // else start in receiving runnable when you receive first packet from client
     }
 

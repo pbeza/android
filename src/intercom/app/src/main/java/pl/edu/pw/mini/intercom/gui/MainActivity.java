@@ -1,9 +1,10 @@
 package pl.edu.pw.mini.intercom.gui;
 
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -49,11 +50,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         config = (EchoConfigApplication) getApplication();
-        config.updateMainActivityReference(this); // TODO remove it somehow
-        addActionsToIntentFilter();
-    }
-
-    private void addActionsToIntentFilter() {
         String[] actions = {
                 WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION,
                 WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION,
@@ -71,9 +67,8 @@ public class MainActivity extends AppCompatActivity
         if (!config.isEchoServiceBinded()) {
             config.bindEchoService();
         }
-        WifiConfig wifiConfig = WifiConfig.getInstance();
-        BroadcastReceiver receiver = wifiConfig.getReceiver();
-        registerReceiver(receiver, intentFilter); // TODO move it to EchoConfigApplication
+        WifiConfig wifiConfig = WifiConfig.getInstance(this);
+        registerReceiver(wifiConfig, intentFilter);
     }
 
     @Override
@@ -82,9 +77,8 @@ public class MainActivity extends AppCompatActivity
         if (config.isEchoServiceBinded()) {
             config.unbindEchoService();
         }
-        WifiConfig wifiConfig = WifiConfig.getInstance();
-        BroadcastReceiver receiver = wifiConfig.getReceiver();
-        unregisterReceiver(receiver); // TODO possibly better use static receiver within AndroidManifest.xml
+        WifiConfig wifiConfig = WifiConfig.getInstance(this);
+        unregisterReceiver(wifiConfig); // TODO possibly better use static receiver within AndroidManifest.xml
     }
 
 //    @Override
@@ -162,7 +156,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void discoverPeers(View v) {
-        WifiConfig wifiConfig = WifiConfig.getInstance();
+        WifiConfig wifiConfig = WifiConfig.getInstance(this);
         boolean isWifiEnabled = wifiConfig.isWifiP2pEnabled();
         if (!isWifiEnabled) {
             Toast.makeText(this, R.string.p2p_off_warning, Toast.LENGTH_SHORT).show();
@@ -172,11 +166,12 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getFragmentManager();
         DeviceListFragment fragment = (DeviceListFragment) fragmentManager.findFragmentById(R.id.frag_list);
         fragment.onInitiateDiscovery();
-        wifiConfig.discoverPeers();
+        wifiConfig.discoverPeers(this);
     }
 
     public void toggleMuteVolume(View view) {
-        AudioConfig audioConfig = AudioConfig.getInstance();
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        AudioConfig audioConfig = AudioConfig.getInstance(audioManager);
         boolean isPlaying = audioConfig.togglePlaying();
         FloatingActionButton b = (FloatingActionButton) findViewById(R.id.muteFloatingActionButton);
         b.setImageResource(isPlaying ? R.drawable.ic_volume_up_black_24dp : R.drawable.ic_volume_off_black_24dp);

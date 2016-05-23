@@ -15,7 +15,7 @@ public class AudioConfig {
     // TODO adjust optimal audio parameters (sample rate, buffers length etc.)
     // TODO some method calls probably should be 'synchronized' (parallel access issues)
 
-    private static AudioConfig instance = new AudioConfig();
+    private static AudioConfig singleton;
     public static final int
             AUDIO_TRACK_MODE = AudioTrack.MODE_STREAM,
             AUDIO_RECORD_SAMPLE_RATE_IN_HZ = 16000,
@@ -45,14 +45,17 @@ public class AudioConfig {
         audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, AUDIO_TRACK_SAMPLE_RATE_IN_HZ, OUT_CHANNEL_CONFIG, OUT_AUDIO_FORMAT, audioTrackBufferInBytes, AUDIO_TRACK_MODE);
     }
 
-    public static AudioConfig getInstance() {
-        return instance;
+    public static AudioConfig getInstance(AudioManager audioManager) {
+        if (singleton == null) {
+            singleton = new AudioConfig();
+        }
+        singleton.audioManager = audioManager;
+        audioManager.setMode(AUDIO_MANAGER_COMMUNICATION_MODE); // TODO it shouldn't be here
+        return singleton;
     }
 
-    // TODO remove this somehow
-    public void updateAudioManagerReferences(AudioManager audioManager) {
-        this.audioManager = audioManager;
-        audioManager.setMode(AUDIO_MANAGER_COMMUNICATION_MODE);
+    public AudioManager getAudioManager() {
+        return audioManager;
     }
 
     public int getAudioRecordBufferInBytes() {

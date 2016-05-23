@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.pw.mini.intercom.R;
-import pl.edu.pw.mini.intercom.connection.p2p.DeviceActionListener;
 import pl.edu.pw.mini.intercom.connection.p2p.WifiConfig;
 
 public class DeviceListFragment extends Fragment implements PeerListListener {
@@ -112,8 +111,9 @@ public class DeviceListFragment extends Fragment implements PeerListListener {
 
         @Override
         public void onClick(WifiP2pDevice device, View view) {
-            WifiConfig wifiConfig = WifiConfig.getInstance();
-            wifiConfig.showDetails(device);
+            MainActivity mainActivity = (MainActivity) getActivity();
+            WifiConfig wifiConfig = WifiConfig.getInstance(mainActivity);
+            wifiConfig.showDetails(device, mainActivity.getFragmentManager());
         }
     }
 

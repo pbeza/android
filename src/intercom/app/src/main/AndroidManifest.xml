@@ -40,6 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- See: http://stackoverflow.com/questions/10876015/broadcast-receiver-register-in-manifest-vs-activity -->
         <service
             android:name=".connection.socket.EchoService"
             android:exported="false" />

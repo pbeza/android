@@ -1,8 +1,10 @@
 package pl.edu.pw.mini.intercom.connection.socket;
 
+import android.media.AudioManager;
 import android.os.Looper;
 
 import pl.edu.pw.mini.intercom.audio.AudioConfig;
+import pl.edu.pw.mini.intercom.gui.MainActivity;
 
 abstract class EchoServiceBaseRunnable implements Runnable {
 
@@ -12,8 +14,8 @@ abstract class EchoServiceBaseRunnable implements Runnable {
     final String peerHost;
     volatile boolean stopRunnable = false;
 
-    EchoServiceBaseRunnable(boolean amIGroupOwner, String peerHost) {
-        this.audioConfig = AudioConfig.getInstance();
+    EchoServiceBaseRunnable(AudioManager audioManager, boolean amIGroupOwner, String peerHost) {
+        this.audioConfig = AudioConfig.getInstance(audioManager);
         this.amIGroupOwner = amIGroupOwner;
         this.peerHost = peerHost;
     }

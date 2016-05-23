@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.intercom.connection.socket;
 
+import android.media.AudioManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -11,12 +12,12 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
 
     private static final String LOG_TAG = "VoiceReceivingRunnable";
 
-    private EchoServiceVoiceReceivingRunnable(boolean amIGroupOwner, String peerHost) {
-        super(amIGroupOwner, peerHost);
+    private EchoServiceVoiceReceivingRunnable(AudioManager audioManager, boolean amIGroupOwner, String peerHost) {
+        super(audioManager, amIGroupOwner, peerHost);
     }
 
-    public static void startReceivingRunnable(boolean amIGroupOwner, String serverHost) {
-        Runnable receivingRunnable = new EchoServiceVoiceReceivingRunnable(amIGroupOwner, serverHost);
+    public static void startReceivingRunnable(AudioManager audioManager, boolean amIGroupOwner, String serverHost) {
+        Runnable receivingRunnable = new EchoServiceVoiceReceivingRunnable(audioManager, amIGroupOwner, serverHost);
         startRunnable(receivingRunnable);
         Log.d(LOG_TAG, "Thread receiving voice from peer started successfully");
     }
@@ -68,6 +69,6 @@ public class EchoServiceVoiceReceivingRunnable extends EchoServiceBaseRunnable {
             Log.e(LOG_TAG, "Didn't receive first packet", e);
             throw e;
         }
-        EchoServiceVoiceSendingRunnable.startSendingRunnable(amIGroupOwner, hostName);
+        EchoServiceVoiceSendingRunnable.startSendingRunnable(audioConfig.getAudioManager(), amIGroupOwner, hostName);
     }
 }

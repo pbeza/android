@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.intercom.connection.socket;
 
+import android.media.AudioManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -11,12 +12,12 @@ public class EchoServiceVoiceSendingRunnable extends EchoServiceBaseRunnable {
 
     private static final String LOG_TAG = "RecordSendVoiceRunnable";
 
-    private EchoServiceVoiceSendingRunnable(boolean amIGroupOwner, String peerHost) {
-        super(amIGroupOwner, peerHost);
+    private EchoServiceVoiceSendingRunnable(AudioManager audioManager, boolean amIGroupOwner, String peerHost) {
+        super(audioManager, amIGroupOwner, peerHost);
     }
 
-    public static void startSendingRunnable(boolean amIGroupOwner, String serverHost) {
-        Runnable sendingRunnable = new EchoServiceVoiceSendingRunnable(amIGroupOwner, serverHost);
+    public static void startSendingRunnable(AudioManager audioManager, boolean amIGroupOwner, String serverHost) {
+        Runnable sendingRunnable = new EchoServiceVoiceSendingRunnable(audioManager, amIGroupOwner, serverHost);
         startRunnable(sendingRunnable);
         Log.d(LOG_TAG, "Thread recording and sending voice to peer started successfully");
     }
