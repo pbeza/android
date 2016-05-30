@@ -2,34 +2,46 @@ package pl.edu.pw.mini.intercom.audio;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
-import layout.SettingsFragment;
+import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.gui.SettingsFragment;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    public static final String FRAGMENT_TAG = "settingsFragment";
+    public static final String KEY_PREF_SAMPLE_RATE = "pref_sampleRate";
+
+    private SettingsFragment settingsFragment;
 
 
-    SharedPreferences.OnSharedPreferenceChangeListener listener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-                }
-            };
+
+//        if (key.equals(KEY_PREF_SAMPLE_RATE)) {
+//            Preference pref = settingsFragment.findPreference(key);
+//            pref.setSummary(sharedPreferences.getString(key, ""));
+//        }
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
 
-//        getSharedPreferences().registerOnSharedPreferenceChangeListener();
+
+        settingsFragment.getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        getPreferenceScreen().getSharedPreferences()
-//                .unregisterOnSharedPreferenceChangeListener(this);
+        settingsFragment.getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -38,10 +50,12 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // Display the fragment as the main content.
+        settingsFragment = new SettingsFragment();
+
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(android.R.id.content, settingsFragment, FRAGMENT_TAG)
                 .commit();
     }
-
-
 }
+
+

@@ -45,6 +45,9 @@
     <string name="disconnected">Disconnnected</string>
     <string name="connectedwith">Connnected</string>
     <string name="sample_rate">Sample rate</string>
+    <string name="sample_size">Sample size</string>
+    <string name="mode_audiotrack">Mode Audiotrack</string>
+    <string name="mode_playing">Mode playing</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -1,4 +1,4 @@
-package layout;
+package pl.edu.pw.mini.intercom.gui;
 
 
 import android.os.Bundle;

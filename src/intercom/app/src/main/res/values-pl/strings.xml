@@ -43,6 +43,8 @@
     <string name="disconnected">Rozłączono</string>
     <string name="connectedwith">Połączono</string>
     <string name="sample_rate">Częstotliwość próbkowania</string>
+    <string name="sample_size">Wielkość próbkowania</string>
+    <string name="mode_audiotrack">Tryb Audiotrack</string>
+    <string name="mode_playing">Tryb odtwarzania</string>
 
-    <string name="pref_sampleRate_default">19000</string>
 </resources>
