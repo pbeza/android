@@ -1,15 +1,18 @@
 package pl.edu.pw.mini.intercom.gui;
 
 import android.app.FragmentManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,10 +36,19 @@ public class MainActivity extends AppCompatActivity
     private final IntentFilter intentFilter = new IntentFilter();
     private EchoConfigApplication config;
 
-    @Override
+    private NotificationCompat.Builder mBuilder;
+    // Sets an ID for the notification
+    private int mNotificationId = 001;
+    // Gets an instance of the NotificationManager service
+
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,14 +71,22 @@ public class MainActivity extends AppCompatActivity
         for (String action : actions) {
             intentFilter.addAction(action);
         }
+
+        mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(getString(R.string.notification_title))
+                        .setContentText(getString(R.string.notification_text));
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!config.isEchoServiceBinded()) {
-            config.bindEchoService();
-        }
+//        if (!config.isEchoServiceBinded()) {
+//            config.bindEchoService();
+//        }
         WifiConfig wifiConfig = WifiConfig.getInstance(this);
         registerReceiver(wifiConfig, intentFilter);
     }
@@ -74,18 +94,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if (config.isEchoServiceBinded()) {
-            config.unbindEchoService();
-        }
+//        if (config.isEchoServiceBinded()) {
+//            config.unbindEchoService();
+//        }
         WifiConfig wifiConfig = WifiConfig.getInstance(this);
         unregisterReceiver(wifiConfig); // TODO possibly better use static receiver within AndroidManifest.xml
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
 
     public void clearViews() {
         clearPeers();

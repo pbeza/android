@@ -40,4 +40,12 @@
     <string name="unavailable">Unavailable</string>
     <string name="unknown">Unknown</string>
     <string name="settings">Settings</string>
+    <string name="notification_title">Intercom</string>
+    <string name="notification_text">Application running in background</string>
+    <string name="disconnected">Disconnnected</string>
+    <string name="connectedwith">Connnected</string>
+    <string name="sample_rate">Sample rate</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

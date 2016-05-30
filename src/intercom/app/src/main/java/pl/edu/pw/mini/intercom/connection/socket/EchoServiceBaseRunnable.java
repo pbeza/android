@@ -12,7 +12,7 @@ abstract class EchoServiceBaseRunnable implements Runnable {
     final AudioConfig audioConfig;
     final boolean amIGroupOwner;
     final String peerHost;
-    volatile boolean stopRunnable = false;
+    static volatile boolean stopRunnable = false;
 
     EchoServiceBaseRunnable(AudioManager audioManager, boolean amIGroupOwner, String peerHost) {
         this.audioConfig = AudioConfig.getInstance(audioManager);
@@ -20,11 +20,12 @@ abstract class EchoServiceBaseRunnable implements Runnable {
         this.peerHost = peerHost;
     }
 
-    public synchronized void stop() {// TODO synchronized needed?
+    public static synchronized void stop() {// TODO synchronized needed?
         stopRunnable = true;
     }
 
     static void startRunnable(Runnable runnable) {
+        stopRunnable=false;
         Thread thread = new Thread(runnable);
         thread.start();
     }

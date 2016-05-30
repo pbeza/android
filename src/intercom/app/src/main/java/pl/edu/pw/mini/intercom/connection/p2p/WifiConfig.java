@@ -15,6 +15,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import pl.edu.pw.mini.intercom.R;
 import pl.edu.pw.mini.intercom.gui.DeviceDetailFragment;
 import pl.edu.pw.mini.intercom.gui.DeviceListFragment;
@@ -130,6 +134,7 @@ public class WifiConfig extends BroadcastReceiver implements WifiP2pManager.Chan
             @Override
             public void onSuccess() {
                 fragment.getView().setVisibility(View.GONE);
+
             }
 
             @Override
@@ -199,8 +204,10 @@ public class WifiConfig extends BroadcastReceiver implements WifiP2pManager.Chan
      */
     private void peersChangedAction(Intent intent) {
         Log.d(LOG_TAG, "WIFI_P2P_PEERS_CHANGED_ACTION");
-        final WifiP2pDeviceList wifiP2pDeviceList = (WifiP2pDeviceList) intent.getExtras().get(WifiP2pManager.EXTRA_P2P_DEVICE_LIST);
-        Log.d(LOG_TAG, "Currently " + wifiP2pDeviceList.getDeviceList().size() + " peer(s) available");
+
+        //        please use API<=17 only
+//        final WifiP2pDeviceList wifiP2pDeviceList = (WifiP2pDeviceList) intent.getExtras().get(WifiP2pManager.EXTRA_P2P_DEVICE_LIST);
+//        Log.d(LOG_TAG, "Currently " + wifiP2pDeviceList.getDeviceList().size() + " peer(s) available");
         // Request available peers from the wifi p2p manager. This is an asynchronous call and the
         // calling activity is notified with a callback on PeerListListener.onPeersAvailable()
         if (manager != null) {
@@ -226,15 +233,36 @@ public class WifiConfig extends BroadcastReceiver implements WifiP2pManager.Chan
         }
         WifiP2pInfo p2pInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
         Log.v(LOG_TAG, "WiFi P2P info: " + p2pInfo.toString());
-        WifiP2pGroup p2pGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
-        Log.v(LOG_TAG, "WiFi P2P group" + p2pGroup.toString());
+       // please use API<=17 only
+//        WifiP2pGroup p2pGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
+//        Log.v(LOG_TAG, "WiFi P2P group" + p2pGroup.toString());
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
         if (networkInfo.isConnected()) {
             DeviceDetailFragment fragment = (DeviceDetailFragment) mainActivity.getFragmentManager().findFragmentById(R.id.frag_detail);
             Log.d(LOG_TAG, "We are connected - requesting connection info");
+
+            //tylko w API>=18 istnieje obiekt WifiP2pGroup skad mozna wydobyc nazwe klienta z ktorym sie polaczylismy
+            if (android.os.Build.VERSION.SDK_INT >= 18)
+            {
+                WifiP2pGroup p2pGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
+                ArrayList<WifiP2pDevice> arli= new ArrayList<WifiP2pDevice>(p2pGroup.getClientList());
+
+                //obrzydliwy if, ale czasami na roznych telefonach (Samsung i Sony) ten obiekt przychodzi pusty :(
+                if (arli.size() > 0) {
+                    String devName=arli.get(0).deviceName;
+                    Toast.makeText(mainActivity, mainActivity.getResources().getString(R.string.connectedwith) + ": " + devName, Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(mainActivity, R.string.connectedwith, Toast.LENGTH_SHORT).show();
+            }
+
             manager.requestConnectionInfo(channel, fragment);
+
         } else {
             Log.d(LOG_TAG, "We are not connected - clearing data");
+            Toast.makeText(mainActivity, R.string.disconnected, Toast.LENGTH_SHORT).show();
             mainActivity.clearViews();
         }
     }

@@ -40,4 +40,9 @@
     <string name="unavailable">Urządzenie niedostępne</string>
     <string name="unknown">Urządzenie nieznane</string>
     <string name="settings">Ustawienia</string>
+    <string name="disconnected">Rozłączono</string>
+    <string name="connectedwith">Połączono</string>
+    <string name="sample_rate">Częstotliwość próbkowania</string>
+
+    <string name="pref_sampleRate_default">19000</string>
 </resources>

@@ -17,21 +17,21 @@ public class EchoService extends Service {
             PACKAGE_PREFIX = "pl.edu.pw.mini.intercom.",
             EXTRAS_AM_I_GROUP_OWNER = PACKAGE_PREFIX + "AmIGroupOwner",
             EXTRAS_GROUP_OWNER_ADDRESS = PACKAGE_PREFIX + "GroupOwnerAddress",
-    ACTION_START_ECHO_INTENT = PACKAGE_PREFIX + "START_ECHO",
+            ACTION_START_ECHO_INTENT = PACKAGE_PREFIX + "START_ECHO",
             ACTION_STOP_ECHO_INTENT = PACKAGE_PREFIX + "STOP_ECHO";
     private final static String[]
-            ACTION_START_ECHO_INTENT_REQUIRED_PARAMS = new String[]{ EXTRAS_AM_I_GROUP_OWNER, EXTRAS_GROUP_OWNER_ADDRESS },
+            ACTION_START_ECHO_INTENT_REQUIRED_PARAMS = new String[]{EXTRAS_AM_I_GROUP_OWNER, EXTRAS_GROUP_OWNER_ADDRESS},
             ACTION_STOP_ECHO_INTENT_REQUIRED_PARAMS = new String[]{};
     public final static String EXTRAS_MESSENGER_PARAM = PACKAGE_PREFIX + "Messenger";
     private final static boolean ALLOW_REBIND = false;
-    private final IBinder echoServiceBinder = new EchoServiceBinder();
-    private Messenger outMessenger;
+//    private final IBinder echoServiceBinder = new EchoServiceBinder();
+//    private Messenger outMessenger;
 
-    public class EchoServiceBinder extends Binder {
-        public EchoService getService() {
-            return EchoService.this;
-        }
-    }
+//    public class EchoServiceBinder extends Binder {
+//        public EchoService getService() {
+//            return EchoService.this;
+//        }
+//    }
 
     private class IntentExtraParams {
         public boolean amIGroupOwner;
@@ -129,18 +129,26 @@ public class EchoService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            // Messenger can be used to communicate with MainActivity
-            outMessenger = (Messenger) extras.get(EXTRAS_MESSENGER_PARAM);
-        }
-        return echoServiceBinder;
+    public void onDestroy() {
+        super.onDestroy();
+        EchoServiceBaseRunnable.stop();
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
-        super.onUnbind(intent);
-        return ALLOW_REBIND;
+    public IBinder onBind(Intent intent) {
+//        Bundle extras = intent.getExtras();
+//        if (extras != null) {
+//            // Messenger can be used to communicate with MainActivity
+//            outMessenger = (Messenger) extras.get(EXTRAS_MESSENGER_PARAM);
+//        }
+//        return echoServiceBinder;
+
+        return null;
     }
+//
+//    @Override
+//    public boolean onUnbind(Intent intent) {
+//        super.onUnbind(intent);
+//        return ALLOW_REBIND;
+//    }
 }

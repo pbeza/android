@@ -21,37 +21,37 @@ import pl.edu.pw.mini.intercom.connection.socket.EchoServiceMessageQueueHandler;
  */
 public class EchoConfigApplication extends Application {
 
-    private final Handler messageQueueHandler = new EchoServiceMessageQueueHandler();
-    private EchoService echoService;
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            echoService = ((EchoService.EchoServiceBinder) service).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            echoService = null;
-        }
-    };
-
-    public boolean isEchoServiceBinded() {
-        return echoService != null;
-    }
-
-    public boolean bindEchoService() {
-        Intent intent = new Intent(this, EchoService.class);
-        // Messenger for the communication back from the Service to the Activity
-        Messenger messenger = new Messenger(messageQueueHandler);
-        intent.putExtra(EchoService.EXTRAS_MESSENGER_PARAM, messenger);
-//        intent.setAction(EchoService.ACTION_START_ECHO_PARAM);
-        return bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    public void unbindEchoService() {
-        unbindService(serviceConnection);
-        echoService = null;
-    }
+//    private final Handler messageQueueHandler = new EchoServiceMessageQueueHandler();
+//    private EchoService echoService;
+//    private final ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            echoService = ((EchoService.EchoServiceBinder) service).getService();
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName className) {
+//            echoService = null;
+//        }
+//    };
+//
+//    public boolean isEchoServiceBinded() {
+//        return echoService != null;
+//    }
+//
+//    public boolean bindEchoService() {
+//        Intent intent = new Intent(this, EchoService.class);
+//        // Messenger for the communication back from the Service to the Activity
+//        Messenger messenger = new Messenger(messageQueueHandler);
+//        intent.putExtra(EchoService.EXTRAS_MESSENGER_PARAM, messenger);
+////        intent.setAction(EchoService.ACTION_START_ECHO_PARAM);
+//        return bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+//    }
+//
+//    public void unbindEchoService() {
+//        unbindService(serviceConnection);
+//        echoService = null;
+//    }
 
     @Override
     public void onCreate() {
@@ -62,7 +62,7 @@ public class EchoConfigApplication extends Application {
 //        EchoService.startEchoService(this);
     }
 
-    public EchoService getEchoService() {
-        return echoService;
-    }
+//    public EchoService getEchoService() {
+//        return echoService;
+//    }
 }

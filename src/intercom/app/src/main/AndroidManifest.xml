@@ -3,7 +3,7 @@
     package="pl.edu.pw.mini.intercom">
 
     <uses-sdk
-        android:minSdkVersion="21"
+        android:minSdkVersion="17"
         android:targetSdkVersion="23" />
 
     <!-- List of available permissions: http://developer.android.com/reference/android/Manifest.permission.html -->
@@ -24,6 +24,8 @@
         android:name="android.hardware.wifi.direct"
         android:required="true" />
 
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".config.EchoConfigApplication"
         android:allowBackup="true"
@@ -37,6 +39,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,6 +47,8 @@
         <service
             android:name=".connection.socket.EchoService"
             android:exported="false" />
+
+        <activity android:name=".audio.SettingsActivity"></activity>
     </application>
 
 </manifest>

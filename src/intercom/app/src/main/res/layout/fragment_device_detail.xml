@@ -32,6 +32,28 @@
             android:text="@string/disconnect_peer_button" />
 
         <Button
+            android:id="@+id/btn_start_svc"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Svc" />
+
+        <Button
+            android:id="@+id/btn_stop_svc"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop Svc" />
+        <Button
+            android:id="@+id/btn_settings"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings" />
+
+
+
+        <Button
             android:id="@+id/btn_launch_gallery"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"

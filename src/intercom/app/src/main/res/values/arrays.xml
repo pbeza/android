@@ -1,0 +1,15 @@
+<resources>
+    <string-array name="pref_sampleRate_entries">
+        <item>"8 kHz"</item>
+        <item>"19 kHz"</item>
+        <item>"54 kHz"</item>
+    </string-array>
+
+    <string-array name="pref_sampleRate_values">
+        <item>8000</item>
+        <item>19000</item>
+        <item>54000</item>
+    </string-array>
+
+
+</resources>

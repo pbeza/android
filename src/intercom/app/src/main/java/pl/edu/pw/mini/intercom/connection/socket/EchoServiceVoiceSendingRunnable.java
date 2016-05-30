@@ -48,7 +48,7 @@ public class EchoServiceVoiceSendingRunnable extends EchoServiceBaseRunnable {
         while (!stopRunnable) {
             int readBytes = audioConfig.read(audioData);
             DatagramPacket p = new DatagramPacket(audioData, readBytes, peerAddress, PORT);
-            peerSocket.send(p); // carelessly sends to peer even if not listening (beauty of UDP) :)
+            peerSocket.send(p); // careleussly sends to peer even if not listening (beauty of UDP) :)
             //audioConfig.write(audioData, byteOffset, readBytes); // uncomment to hear your voice in speaker
         }
         peerSocket.close();

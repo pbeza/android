@@ -3,6 +3,7 @@ package pl.edu.pw.mini.intercom.gui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.audio.SettingsActivity;
 import pl.edu.pw.mini.intercom.config.EchoConfigApplication;
 import pl.edu.pw.mini.intercom.connection.p2p.WifiConfig;
 import pl.edu.pw.mini.intercom.connection.socket.EchoService;
@@ -27,6 +29,11 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
     private WifiP2pDevice device;
     private ProgressDialog progressDialog;
     private static boolean connectionEstablished = false; // FIXME temporary 'hotfix' (note it MUST be static)
+
+    //
+    private boolean isGroupOwner=false;
+    private String groupOwnerAdress;
+    //
 
     private class ConnectOnClickListener implements View.OnClickListener {
         @Override
@@ -71,6 +78,27 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         contentView = inflater.inflate(R.layout.fragment_device_detail, null);
         contentView.findViewById(R.id.btn_connect).setOnClickListener(new ConnectOnClickListener());
         contentView.findViewById(R.id.btn_disconnect).setOnClickListener(new DisconnectOnClickListener());
+
+        contentView.findViewById(R.id.btn_start_svc).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EchoService.startEchoService(getActivity(), isGroupOwner, groupOwnerAdress);
+            }
+        });
+        contentView.findViewById(R.id.btn_stop_svc).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EchoService.stopEchoService(getActivity());
+            }
+        });
+        contentView.findViewById(R.id.btn_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return contentView;
     }
 
@@ -87,11 +115,14 @@ public class DeviceDetailFragment extends Fragment implements WifiP2pManager.Con
         if (info.groupFormed && !connectionEstablished) {
             connectionEstablished = true;
             String groupOwnerHostAddress = info.groupOwnerAddress.getHostAddress();
-            EchoService.startEchoService(getActivity(), info.isGroupOwner, info.groupOwnerAddress.getHostAddress());
-            Activity activity = getActivity();
-            EchoConfigApplication echoConfigApplication = (EchoConfigApplication) activity.getApplication();
-            EchoService echoService = echoConfigApplication.getEchoService();
-            echoService.startSocketConnection(info.isGroupOwner, groupOwnerHostAddress);
+            this.isGroupOwner=info.isGroupOwner;
+            this.groupOwnerAdress=info.groupOwnerAddress.getHostAddress();
+//            EchoService.startEchoService(getActivity(), info.isGroupOwner, info.groupOwnerAddress.getHostAddress());
+// linijka powyzej w konsekwencji juz startuje wszystko co wykomentowane ponizej
+//            Activity activity = getActivity();
+//            EchoConfigApplication echoConfigApplication = (EchoConfigApplication) activity.getApplication();
+//            EchoService echoService = echoConfigApplication.getEchoService();
+//            echoService.startSocketConnection(info.isGroupOwner, groupOwnerHostAddress);
             contentView.findViewById(R.id.btn_connect).setVisibility(View.GONE);
         } else {
             Log.e(LOG_TAG, "Group was not formed");

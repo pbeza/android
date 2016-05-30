@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_sampleRate_key"
+        android:title="@string/sample_rate"
+        android:entries="@array/pref_sampleRate_entries"
+        android:entryValues="@array/pref_sampleRate_values"
+        android:defaultValue="@string/pref_sampleRate_default"/>
+
+</PreferenceScreen>
