@@ -1,16 +1,16 @@
 package pl.edu.pw.mini.intercom.config;
 
 import android.app.Application;
-import android.content.ComponentName;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Messenger;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
-import pl.edu.pw.mini.intercom.connection.socket.EchoService;
-import pl.edu.pw.mini.intercom.connection.socket.EchoServiceMessageQueueHandler;
+import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.gui.MainActivity;
 
 /*
  * See:
@@ -21,6 +21,49 @@ import pl.edu.pw.mini.intercom.connection.socket.EchoServiceMessageQueueHandler;
  */
 public class EchoConfigApplication extends Application {
 
+    private static final String LOG_TAG = "EchoConfigApplication";
+
+    private NotificationCompat.Builder mBuilder;
+    private NotificationManager mNotificationManager;
+    private int mId = 1;
+
+    public void NotifyWhenExitingWithRunningService() {
+        if (!LifecycleHandler.isApplicationInForeground()) {
+            Log.w("LifecycleHandler", "whole application goes to background");
+
+            mBuilder.setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(getResources().getString(R.string.notification_title))
+                    .setContentText(getResources().getString(R.string.notification_text))
+                    .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                    .setOngoing(true);
+
+            Intent resultIntent = new Intent(this, MainActivity.class);
+            // The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(MainActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+
+// mId allows you to update the notification later on.
+            mNotificationManager.notify(mId, mBuilder.build());
+
+
+        }
+    }
+
+    public void CancelNotificationOnStartingAnyActivity() {
+        mNotificationManager.cancelAll();
+    }
 //    private final Handler messageQueueHandler = new EchoServiceMessageQueueHandler();
 //    private EchoService echoService;
 //    private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -56,6 +99,11 @@ public class EchoConfigApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        registerActivityLifecycleCallbacks(new LifecycleHandler());
+        mBuilder =
+                new NotificationCompat.Builder(this);
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 //        wifiConfig = WifiConfig.getInstance();
 //        wifiConfig.discoverPeers();
 //        setVolumeControlStream(AudioManager.MODE_IN_COMMUNICATION);
@@ -65,4 +113,7 @@ public class EchoConfigApplication extends Application {
 //    public EchoService getEchoService() {
 //        return echoService;
 //    }
+
+
 }
+

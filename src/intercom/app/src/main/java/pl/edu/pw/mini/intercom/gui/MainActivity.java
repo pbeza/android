@@ -1,7 +1,6 @@
 package pl.edu.pw.mini.intercom.gui;
 
 import android.app.FragmentManager;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,7 +11,6 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,13 +34,6 @@ public class MainActivity extends AppCompatActivity
     private final IntentFilter intentFilter = new IntentFilter();
     private EchoConfigApplication config;
 
-    private NotificationCompat.Builder mBuilder;
-    // Sets an ID for the notification
-    private int mNotificationId = 001;
-    // Gets an instance of the NotificationManager service
-
-
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +43,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -71,12 +63,6 @@ public class MainActivity extends AppCompatActivity
         for (String action : actions) {
             intentFilter.addAction(action);
         }
-
-        mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(getString(R.string.notification_title))
-                        .setContentText(getString(R.string.notification_text));
 
 
     }
@@ -105,9 +91,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         //setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
     }
 
     public void clearViews() {

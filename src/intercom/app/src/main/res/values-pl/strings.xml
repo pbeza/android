@@ -46,5 +46,9 @@
     <string name="sample_size">Wielkość próbkowania</string>
     <string name="mode_audiotrack">Tryb Audiotrack</string>
     <string name="mode_playing">Tryb odtwarzania</string>
+    <string name="notification_title">Intercom</string>
+    <string name="notification_text">Aplikacja działa w tle</string>
+
+
 
 </resources>

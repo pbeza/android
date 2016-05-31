@@ -3,14 +3,13 @@ package pl.edu.pw.mini.intercom.audio;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 
-import pl.edu.pw.mini.intercom.R;
+import pl.edu.pw.mini.intercom.config.EchoConfigApplication;
 import pl.edu.pw.mini.intercom.gui.SettingsFragment;
 
 public class SettingsActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String LOG_TAG = "SettingsActivity";
 
     public static final String FRAGMENT_TAG = "settingsFragment";
     public static final String KEY_PREF_SAMPLE_RATE = "pref_sampleRate";
@@ -55,6 +54,14 @@ public class SettingsActivity extends Activity implements SharedPreferences.OnSh
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, settingsFragment, FRAGMENT_TAG)
                 .commit();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+
     }
 }
 
