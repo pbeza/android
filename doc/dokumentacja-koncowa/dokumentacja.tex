@@ -16,8 +16,6 @@
 \usepackage{csquotes}
 \usepackage{enumitem}
 \usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{indentfirst}
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage{parskip}
@@ -25,10 +23,18 @@
 \usepackage{setspace}
 \usepackage{verbatimbox}
 \usepackage{wrapfig}
-
-\linespread{1.4}
+\usepackage[hang,flushmargin]{footmisc}
+\usepackage{hyperref}
+\usepackage{footnotebackref}
 
 %\addbibresource{Dokumentacja wstepna.bib}
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
+
+\linespread{1.4}
 
 \renewcommand*\appendixpagename{Załącznik}
 \renewcommand{\qedsymbol}{$\square$}
@@ -36,7 +42,7 @@
 \let\emptyset\varnothing
 
 \makeatother
-\setlength{\parindent}{24pt}
+%\setlength{\parindent}{24pt}
 \theoremstyle{break}
 \newtheorem*{uwaga}{Uwaga}
 \newtheorem{definicja}{Definicja}[section]
@@ -47,10 +53,10 @@
 
 %------------------------------------------------------------------------------
 
-\title{Dokumentacja projektu}
+\title{Raport z projektu\\[0.4em]Intercom}
 \author{
-    \href{mailto:bezap@student.mini.pw.edu.pl}{Patryk~Bęza}\\[0.7em]
-    \href{mailto:plodczykm@student.mini.pw.edu.pl}{Mateusz~Płodczyk}\\[0.7em]
+    inż.~Patryk~Bęza\\\texttt{\small (\href{mailto:bezap@student.mini.pw.edu.pl}{bezap@student.mini.pw.edu.pl})}\\[0.7em]
+    inż.~Mateusz~Płodczyk\\\texttt{\small (\href{mailto:plodczykm@student.mini.pw.edu.pl}{plodczykm@student.mini.pw.edu.pl})}\\[0.7em]
 }
 \date{\today}
 
@@ -68,7 +74,7 @@
 \textsc{\large Aplikacje mobilne: Android}\\[0.2cm]
 \textsc{\small Rok akademicki 2015/2016}\\[1.5cm]
 
-\HRule \\[1cm]
+\HRule \\[0.6cm]
 { \huge \bfseries \@title}\\[0.7cm]
 \HRule \\[1.75cm]
 
@@ -82,7 +88,7 @@
 \begin{flushright}\large
 \textsc{Wykładowca:}\\[3mm]
 \href{mailto:M.Luckner@mini.pw.edu.pl}{dr~inż.~Marcin~Luckner}\\[1cm]
-\textsc{Laborant:}\\[3mm]
+\textsc{Prowadzący projekt:}\\[3mm]
 \href{mailto:A.Cislak@mini.pw.edu.pl}{mgr~inż.~Aleksander~Cisłak}\\[1cm]
 \end{flushright}
 \end{minipage}
@@ -92,8 +98,11 @@
 \end{titlepage}
 
 %\maketitle
+\blankpage
 \tableofcontents
+\thispagestyle{empty} % no page number on TOC page
 \clearpage
+\blankpage
 
 %------------------------------------------------------------------------------
 
@@ -104,7 +113,7 @@
     \includegraphics[width=0.3\textwidth]{img/intercom}
 \end{figure}
 
-Niniejszy dokument powstał w~ramach dokumentacji projektu zespołowego z~przedmiotu \textit{Aplikacje mobilne: Android} w semestrze letnim roku akademickiego~2015/2016 na \emph{\href{http://www.mini.pw.edu.pl/}{Wydziale MiNI}~\href{https://www.pw.edu.pl/}{Politechniki Warszawskiej}}. Ma on za zadanie udokumentować ideę działania aplikacji mobilnej, sposób jej użycia, wykorzystane narzędzia i biblioteki oraz wyniki testów funkcjonalnych i wydajnościowych oraz wnioski.
+Niniejszy dokument powstał w~ramach dokumentacji projektu zespołowego z~przedmiotu \textit{Aplikacje mobilne: Android} w semestrze letnim roku akademickiego~2015/2016 na \emph{\href{http://www.mini.pw.edu.pl/}{Wydziale MiNI}~\href{https://www.pw.edu.pl/}{Politechniki Warszawskiej}}. Ma on za zadanie udokumentować ideę działania aplikacji mobilnej, sposób jej użycia, wykorzystane narzędzia i biblioteki, napotkane problemy, wyniki testów funkcjonalnych oraz wnioski.
 
 \end{abstract}
 
@@ -114,55 +123,105 @@ Niniejszy dokument powstał w~ramach dokumentacji projektu zespołowego z~przedm
 
 \section{Wstęp}
 \label{wstep}
-\noindent W tym rozdziale przedstawiono krótki opis idei działania tworzonej aplikacji mobilnej.
+
+W tym rozdziale przedstawiono pojęcia wstępne, w szególności: założenia projektowe, opis idei działania stworzonej aplikacji mobilnej oraz wyjaśnienie komu mogłaby się ona przydać.
 
 \subsection{Cel aplikacji}
 
-W ramach projektu powstanie aplikacja mobilna na system \href{http://www.android.com/}{Android}, która będzie miała na celu... \emph{TODO}.
+W ramach projektu powstała aplikacja mobilna na system \href{http://www.android.com/}{Android} o funkcjonalności \href{https://en.wikipedia.org/wiki/Intercom}{\textbf{intercomu}}.
 
 %------------------------------------------------------------------------------
 
-\subsection{Idea działania aplikacji}
+\subsection{Czym jest intercom?}
 
-Rozwinięcie celu aplikacji \emph{TODO}...
+Intercom to urządzenie niezależne od GSM, dostępu do internetu i innych znanych środków komunikacji, umożliwiające transmisje głosu, zazwyczaj na niedużą odległość. Intercomy są często montowane m.in. w budynkach, np. przy wejściach do strzeżonych pomieszczeń, jak również w środkach komunikacji, takich jak: pociągi, samoloty, tramwaje, statki, gdzie najczęściej służą do komunikacji wśród załogi, załogi z pasażerami lub w sytuacjach kryzysowych.
+
+Wymienione intercomy są zazwyczaj przewodowe, tzn. komunikacja następuje ,,po kablu''. Istnieją również intercomy bezprzewodowe, które z reguły, niestety są zdolne do pracy na mniejszych odległościach niż przewodowe odpowiedniki. Bezprzewodowe intercomy są montowane np. w droższych wersjach kasków motocyklistów i w kaskach niektórych kolarzy biorących udział w profesjonalnych zawodach kolarskich\footnote{Np. aby kolarz wiedział ile sekund straty/przewagi ma nad peletonem.}~\cite{www:bike-intercom,www:bike-intercom-mce}. Bezprzewodowa łączność, którą również można nazwać intercomem, jest też komunikacja sędziów w profesjonalnych rozgrywkach piłkarskich -- sędziów liniowych oraz sędziego głównego.
+
+To co łączy wszystkie wymienione intercomy, to to, że są one specjalizowanymi urządzeniami, przystosowanymi do typu końcowego użytkownika. Celem niniejszego projektu było upowszechnienie intercomu, tak, aby każdy posiadacz smartfona, mógł rozmawiać z drugą osobą \emph{za darmo} i \emph{bez potrzeby łączenia się przez urządzenia pośredniczące}, jakimi są np. routery, stacje obsługi protokołu GSM, czyli BTS-y i inne. Warto zauważyć, że połączenie bezpośrednie jest często bezpieczniejsze niż rozmowa przez pośrednika, chociaż przy zasięgu kilkudziesięciu/kilkuset metrów nie musi być to istotna zaleta.
+
+W przeciętnym smartfonie mamy do dyspozycji co najmniej 2 kanały, które moglibyśmy użyć do komunikacji na niewielkie odległości -- \emph{bluetooth} oraz \emph{WiFi}. Zasięg \emph{bluetooth} w smartfonach jest dużo mniejszy niż zasięg WiFi, dlatego zdecydowano się na wybranie komunikacji po WiFi, korzystając ze stosunkowo rzadko stosowanego protokołu nazwanego przez twórców, czyli grupę \emph{Wi-Fi~Alliance} -- \emph{WiFi Direct}. W nomenklaturze \emph{Androida} używa się równoważnie innej nazwy, tzn. \emph{WiFi~peer2pper}.
+
+%------------------------------------------------------------------------------
+
+\subsection{Potencjał komercyjny aplikacji}
+
+Komunikacja na niewielkie odległości, rzędu kilkudziesięciu metrów, może się przydać np. podczas jazdy na rowerze\footnote{To właśnie na wycieczce rowerowej zrodził się pomysł na tę aplikację.}. Każdy kto jeździ w grupie na wycieczki rowerowe, wie, że czasami sytuacja na drodze wymusza jazdę jeden za drugim, co sprawia, że trzeba uciąć prowadzone rozmowy na dłuższy czas. Mimo, że odległość między jadącymi jeden za drugim rowerzystami nie jest duża, komunikacja jest bardzo utrudniona, szczególnie w mieście, gdzie panuje hałas ruchu ulicznego. Można co prawda próbować krzyczeć, ale każdy kto jeździł szybko warszawskimi ulicami lub ścieżkami rowerowymi w grupie co najmniej dwóch osób, wie, że próba zakomunikowania osobie, która jedzie przed nami, w jaką ulicę należy teraz skręcić, jest raczej zdana na porażkę -- nawet jeśli odległość między rowerzystami wynosi 20~metrów.
+
+Komunikacja przez telefon \emph{WiFi~peer2peer} mogłaby istotnie pomóc w komunikacji w takim wypadku. Oczywiście komunikacja nie byłaby prowadzona w taki sposób, w jaki zwykle rozmawiamy przez telefon, tzn. trzymając telefon przy uchu\footnote{Chyba, że ktoś by tak wolał rozmawiać -- nic nie stoi na przeszkodzie, aby tak rozmawiać za pomocą powstałej aplikacji.}. Zamiast tego należałoby podłączyć słuchawki, które na kablu\footnote{Dalszy rozwój aplikacji mógłby polegać np. na wsparciu słuchawek \emph{bluetooth}.} mają mikrofon. Takie słuchawki są często dodawane w zestawie razem ze smartfonem, a jeśli nawet nie zostały dodane, to ich cena nie jest duża.
+
+Innym przykładem, w którym smartfon z funkcją intercomu byłby przydatny, jest komunikacja między ludźmi znajdującymi się w dwóch, różnych, raczej sąsiadujących ze sobą ścianą, pomieszczeniach. Testy pokazały, że typowa ściana nie przeszkadza w prowadzeniu takiej rozmowy.
+
+Przykłady zastosowań można mnożyć -- zależą one wyłącznie od wyobraźni użytkownika. Inne przykładowe pomysły na wykorzystanie aplikacji, to np. komunikacja w trakcie biegania\footnote{Ludzie często biegają ze smartfonem przypiętym do ramienia, mając włączone \emph{Endomondo}.} w grupie, na kajakach, na imprezie masowej (kiedy trudno przedostać się przez tłum do drugiej osoby), podczas polowania (kiedy nie można krzyczeć), w czasie zabaw terenowych (np.~\emph{geocaching}), komunikacja z osobą na budowie/rusztowaniu, znajdującą się piętro (lub być może kilka pięter) wyżej/niżej, komunikacja personelu siedzącego w obsłudze kas w niedużych sklepach~itd.
+
+Ci którzy twierdzą, że zamiast korzystania z intercomu, równie dobrze mogą prowadzić rozmowę przez sieć GSM, ponieważ np. mają darmowe rozmowy, muszą pamiętać, że wyjeżdżając za granice kraju macierzystego, muszą się liczyć z opłatami~\emph{roamingowymi}. Poza tym nie mogą oni prowadzić w ten sposób rozmów z wieloma osobami naraz oraz teoretycznie narażają swoje rozmowy na podsłuchanie przez (nie)uprawnione służby, oddalone o setki kilometrów, co jest bardzo utrudnione przy korzystaniu lokalnie z~WiFi.
+
+%------------------------------------------------------------------------------
+
+\subsection{Istniejące rozwiązania}
+
+Po sprawdzeniu \emph{Androidowego} sklepu \href{https://play.google.com/store}{\emph{Google Play}}, okazało się, że istnieje co najmniej kilka aplikacji, które mają w nazwie słowo \emph{intercom}, jednak po dłuższym rozeznaniu, stało się jasne, że żadna z nich nie korzysta z technologii \emph{WiFi~peer2pper}, wspieranej przez telefony z \emph{Androidem} w wersji co najmniej~\emph{4.4}~\cite{www:android-wifi-p2p,www:android-wifi-p2p-tutorial}.
+
+Ponadto większość z intercomowych aplikacji ma bardzo niewielu użytkowników (niektóre aplikacje rzędu kilkudziesięciu użytkowników), a ich wygląd i \emph{user experience~(UX)} ma bardzo wiele do życzenia, również przez to, że były pisane na stosunkowo stare wersje \emph{Androida}. Tę opinię potwierdzają negatywne komentarze użytkowników~\cite{www:existing-android-intercoms}. Na rynku aplikacji mobilnych istnieje więc miejsce na lepszą implementację intercomu, co autorzy niniejszej pracy chcieli wykorzystać wybierając i implementując opisaną ideę intercomu w technologii \emph{WiFi~peer2pper}.
 
 %------------------------------------------------------------------------------
 
 \section{Aplikacja}
 
-Do stworzenia aplikacji mobinej na system \emph{\href{http://www.android.com/}{Android}} zostanie wykorzystane środowisko programistyczne bazujące na \emph{\href{https://www.jetbrains.com/idea/}{IntelliJ~IDEA}} czeskiej firmy \emph{\href{https://www.jetbrains.com/}{JetBrains}}, tzn.~\emph{\href{http://developer.android.com/tools/studio/index.html}{Android Studio}}, które jest aktualnie oficjalnym \emph{IDE} dla programowania aplikacji dla~\emph{Androida}.
+\subsection{Wykorzystane narzędzia}
 
-\subsection{Dane wejściowe}
+Do stworzenia aplikacji mobinej na system \emph{\href{http://www.android.com/}{Android}} zostało wykorzystane środowisko programistyczne \href{http://developer.android.com/tools/studio/index.html}{\emph{Android~Studio}}, bazujące na \emph{\href{https://www.jetbrains.com/idea/}{IntelliJ~IDEA}} czeskiej firmy \emph{\href{https://www.jetbrains.com/}{JetBrains}}. Wybór \emph{Android~Studio} był naturalnym wyborem ze względu na to, że jest aktualnie oficjalnym \emph{IDE} dla programowania aplikacji dla~\emph{Androida}.
 
-\emph{TODO}
-
-%------------------------------------------------------------------------------
-
-\subsection{Dane wyjściowe}
-
-\emph{TODO}
+W projekcie wykorzystano jedną bibliotekę zewnętrzną, tj.~\texttt{loaderEx}, której kod źródłowy znajduje się w repozytorium~\texttt{github}:
+\begin{center}
+\url{https://github.com/commonsguy/cwac-loaderex}
+\end{center}
+Poza tą biblioteką, cały kod aplikacji korzysta wyłącznie z natywnych bibliotek Androida.
 
 %------------------------------------------------------------------------------
 
-\subsection{Instrukcja obsługi}
+\subsection{Nawiązanie połączenia \emph{peer2peer}}
 
-\emph{TODO}
+Nawiązanie bezpośredniego połączenia między dwoma urządzeniami w technologii \emph{WiFi~peer2peer}, jest możliwe już z poziomu ustawień telefonu. W zaimplementowanym projekcie umożliwiono nawiązanie połączenia również w aplikacji, ale trzeba zdawać sobie sprawę, że połączenie to może być już nawiązane przy uruchomieniu aplikacji.
 
-%------------------------------------------------------------------------------
+Protokół \emph{WiFi~Direct} działa w ten sposób, że przed nawiazaniem połączenia \emph{WiFi~peer2peer} każdy z telefonów jest emulowanym \emph{Access~Pointem}. Przy nawiązywaniu połączenia okazuje się kto nim w rzeczywistości zostaje. Służy do tego faza negocjacji połączenia. Każdy z telefonów może ustawić priorytet określający na ile (nie)chce zostać \emph{Acces~Pointem}. W nomenklaturze narzuconej przez opis protokołu \emph{WiFi~Direct}, \emph{Access~Point} jest utożsamiany z nazwą \emph{Group~Owner}. Android przejął tę nomenklaturę i również używa określenia \emph{Group~Owner}, a nie \emph{Access~Point}, chociaż co do idei zdaje się być tym samym.
 
-\section{Testy}
+Po nawiązaniu połączenia na poziomie warstwy protokołu \emph{WiFi~peer2peer}, klient, tzn. to urządzenie, które nie zostało \emph{Group~Ownerem}, otrzymuje w \emph{BroadcastReceiverze} informację m.in. o numerze IP \emph{Group~Ownera}. Działa to tylko w jedną stronę, tzn. \emph{Group~Owner} nie dostaje powiadomienia o IP klienta (lub wielu klientów, bo to też jest możliwe). Taka konstrukcja protokołu uniemożliwia serwerowi zarówno: wysłanie pakietu UDP do klienta jako pierwszy, jak i inicjację połączenia na poziomie TCP\footnote{W projekcie nie korzysta się z komunikacji TCP -- \emph{streaming} multimediów, w tym audio, jest klasycznym przykładem, dla którego idealnie nadaje się UDP.} przez serwer, co jest naturalne w środowisku klient-serwer, jakim jest, choć z pozoru nie wydaje się być, połączenie \emph{WiFi~peer2peer}.
 
-Ten rozdział opisuje wyniki przeprowadzonych testów funkcjonalnych i~wydajnościowych.
+Z tego też powodu, wysyłanie nagrania z mikrofonu \emph{Group~Ownera} jest opóźnione do czasu otrzymania pierwszego pakietu UDP od klienta. W pakiecie tym znajduje się również IP klienta, dzięki czemu serwer może wystartować wątek nagrywania dźwięku i wysyłania go do klienta. Opóźnienie to jest niezauważalne dla człowieka.
 
-\subsection{Dane testowe}
-
-\emph{TODO}
+Z powodu względnie skomplikowanej obsługi nawiązywania połączeń i niedeterminizmu w tym kto zostaje \emph{Group~Ownerem}, w projekcie zrezygnowano z implementacji rozmów z więcej niż jedną rozmówcą. W przeciwnym razie wiązałoby się to z implementacją jeszcze bardziej skomplikowanego protokołu komunikacji, który musiałby uwzględniać m.in. to kto jest aktualnie \emph{Group~Ownerem}. Ponadto \emph{Group~Owner} musiałby \emph{broadcastować} wszystkie pakiety UDP do wszystkich swoich klientów. Wiązałoby się to z koniecznością inteligentnego utrzymywania listy adresów IP klientów, którzy jeszcze się nie rozłączyli, ale wysłali pierwszy pakiet~UDP. Problemy z okiełznaniem względnie rzadko używanego i względnie słabo udokumentowanego \emph{WiFi~peer2peer}, okazały się na tyle duże, że dostatecznie trudnym zadaniem okazało się zaimplementowanie aplikacji mobilnej w takiej formie, jakiej jest, czyli w formie z udziałem dwóch osób.
 
 %------------------------------------------------------------------------------
 
-\subsection{Wyniki testów}
+\subsection{Funkcjonalność aplikacji}
 
-\emph{TODO}
+Główną funkcjonalnością aplikacji jest oczywiście możliwość rozmowy przez aplikację z drugą osobą. Dodatkowymi funkcjonalnościami, z których zapewne skorzystają bardziej wymagający użytkownicy, są możliwości:
+\begin{itemize}
+	\item wyciszenia drugiego rozmówcy,
+	\item wyłączenia własnego mikrofonu, aby drugi rozmówca go nie słyszał,
+	\item ustawienia szczegółowych ustawień audio, takich jak częstotliwość próbkowania dźwięku itp.,
+	\item podglądu informacji dotyczących nawiązanego połączenia, w szczególności czy jest się \emph{Group~Ownerem}.
+\end{itemize}
+Obsługa aplikacji jest intuicyjna i w wersji minimalnie ,,zaangażowanego'' użytkownika, sprowadza się do nawiązania połączenia. Po nawiązaniu połączenia możliwe jest od razu rozmawianie z drugą osobą.
+
+%------------------------------------------------------------------------------
+
+\section{Wyniki testów}
+
+Przeprowadzone testy funkcjonalne dotyczyły używania aplikacji zarówno bez, jak i ze słuchawkami z mikrofonem. Niezależnie od tego czy słuchawki były podłączone, aplikacja działała na porównywalnym zasięgu, co nie jest w pierwszej chwili oczywiste, poniważ kabel słuchawkowy jest używany przez niektóre telefony komórkowe jako antena dla radia w częstotliwościach~FM.
+
+Telefony z których korzystano podczas testów, to m.in.:
+\begin{center}
+	\texttt{Samsung~Galaxy~S5~(SM-G900F)} z systemem \texttt{Android~5.0}
+\end{center}
+oraz:
+\begin{center}
+	\texttt{Huawei~P8~(GRA-L09)} z systemem \texttt{Android~5.0.1}
+\end{center}
+Testy wykazały, że maksymalna odległość na jakiej z powodzeniem prowadzono rozmowę, to około 30-50~metrów. Odległość tę uzyskano na korytarzu Wydziału~MiNI. Podobną maksymalną odległość uzyskano w otwartym terenie na dworze. Odległość ta może zależy od wielu czynników, takich jak np.: model telefonu, stopień naładowania akumulatora telefonu, rodzaj i ilość przeszkód pomiędzy telefonami (ściany, szyby~itd.).
+
+Dzięku temu, że audio jest przesyłane pakietami UDP, po przekroczeniu maksymalnej dopuszczalnej odległości między telefonami, połączenie~UDP nie jest zrywane, bo takowe nie istnieje (z definicji bezpołączeniowości~UDP). Zerwanie połączenia na poziomie protokołu \emph{WiFi~peer2peer} z reguły nie następuje po przekroczeniu wspomnianych 30-50~metrów. Aby zerwać również to połączenie, należy oddalić się kolejne kilka(naście) metrów. Zerwanie takiego połączenia nie powoduje błędów aplikacji, a w celu podjęcia rozmowy na nowo, należy zbliżyć się do rozmówcy i nawiązać połączenie na nowo.
 
 %------------------------------------------------------------------------------
 
@@ -179,7 +238,8 @@ Poniższa tabela przestawia wykaz rozdziałów opracowanych przez poszczególnyc
 \center
 \begin{tabular}{p{2.5cm}|p{5cm}|p{5cm}}
 & Patryk Bęza & Mateusz Płodczyk \\\hline\hline
-\parbox{3cm}{\ \\Opracowane \\rozdziały} & -- & --\\
+\parbox{3cm}{\ \\Dokumenty} & $\bullet$ Uzasadnienie biznesowe & --\\
+& $\bullet$ Raport końcowy & \\
 \end{tabular}
 \end{table}
 
@@ -202,7 +262,9 @@ Poniższa tabela przestawia podział prac implementacyjnych w ramach projektu.
 
 %------------------------------------------------------------------------------
 
-%\clearpage
-%\printbibliography[title=Bibliografia]
+\clearpage
+\renewcommand\refname{Linki}
+\bibliographystyle{ieeetr}
+\bibliography{dokumentacja}
 
 \end{document}
