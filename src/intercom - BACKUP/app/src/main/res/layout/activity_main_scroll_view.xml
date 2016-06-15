@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/vertical_page_margin"
+        android:paddingLeft="@dimen/horizontal_page_margin"
+        android:paddingRight="@dimen/horizontal_page_margin"
+        android:paddingTop="@dimen/vertical_page_margin">
+
+        <fragment
+            android:id="@+id/frag_list"
+            class="pl.edu.pw.mini.intercom.gui.DeviceListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/fragment_row_devices" />
+
+        <fragment
+            android:id="@+id/frag_detail"
+            class="pl.edu.pw.mini.intercom.gui.DeviceDetailFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/fragment_device_detail" />
+    </LinearLayout>
+</ScrollView>

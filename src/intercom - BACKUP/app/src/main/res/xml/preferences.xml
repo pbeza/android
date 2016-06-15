@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="pref_mode_playing"
+        android:title="@string/mode_playing"
+        android:entries="@array/pref_mode_playing_entries"
+        android:entryValues="@array/pref_mode_playing_values"
+        android:defaultValue="0"
+        android:summary="%s"
+        />
+
+    <ListPreference
+        android:key="pref_mode_audiotrack"
+        android:title="@string/mode_audiotrack"
+        android:entries="@array/pref_mode_audiotrack_entries"
+        android:entryValues="@array/pref_mode_audiotrack_values"
+        android:defaultValue="1"
+        android:summary="%s"
+        />
+    <ListPreference
+        android:key="pref_sample_rate"
+        android:title="@string/sample_rate"
+        android:entries="@array/pref_sampleRate_entries"
+        android:entryValues="@array/pref_sampleRate_values"
+        android:defaultValue="19000"
+        android:summary="%s"
+        />
+    <ListPreference
+        android:key="pref_sample_size"
+        android:title="@string/sample_size"
+        android:entries="@array/pref_sample_size_entries"
+        android:entryValues="@array/pref_sample_size_values"
+        android:defaultValue="1"
+        android:summary="%s"
+        />
+
+
+</PreferenceScreen>

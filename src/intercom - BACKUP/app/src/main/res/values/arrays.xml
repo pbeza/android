@@ -1,0 +1,60 @@
+<resources>
+    <string-array name="pref_sampleRate_entries">
+        <item>"8 kHz"</item>
+        <item>"19 kHz"</item>
+        <item>"54 kHz"</item>
+    </string-array>
+
+    <string-array name="pref_sampleRate_values">
+        <item>8000</item>
+        <item>19000</item>
+        <item>54000</item>
+    </string-array>
+
+
+
+
+
+    <string-array name="pref_sample_size_entries">
+        <item>"domyślna"</item>
+        <item>"16 bit"</item>
+        <item>"8 bit"</item>
+    </string-array>
+
+    <string-array name="pref_sample_size_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+
+
+
+
+    <string-array name="pref_mode_audiotrack_entries">
+        <item>"statyczny"</item>
+        <item>"strumieniowy"</item>
+    </string-array>
+
+    <string-array name="pref_mode_audiotrack_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+
+
+
+
+    <string-array name="pref_mode_playing_entries">
+        <item>"normalny"</item>
+        <item>"słuchawki"</item>
+        <item>"głośnomówiący"</item>
+    </string-array>
+
+    <!--pozmieniac te wartosci odpowiednio!!-->
+    <string-array name="pref_mode_playing_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>

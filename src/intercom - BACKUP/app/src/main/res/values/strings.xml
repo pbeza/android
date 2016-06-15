@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Intercom</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">WiFi settings</string>
+    <string name="connect_peer_button">Connect</string>
+    <string name="disconnect_peer_button">Disconnect</string>
+    <string name="get_file_button">Launch Gallery</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="empty_message">No devices found. Turn on P2P and perform discovery from the Action Bar</string>
+    <string name="p2p_off_warning">Enable P2P from the system settings above</string>
+    <string name="group_owner_text">Am I the Group Owner? </string>
+    <string name="label_me">This device</string>
+    <string name="label_peers">Peers</string>
+    <string name="on_discovery_init_success">Discovery initiated</string>
+    <string name="on_discovery_init_failure">Discovery failed : %d</string>
+    <string name="connection_failure">Connect failed. Retry.</string>
+    <string name="reconnection">Channel lost. Trying again.</string>
+    <string name="connection_lost_permanently">Severe! Channel is probably lost permanently. Try Disable/Re-Enable P2P.</string>
+    <string name="aborting_connection">Aborting connection</string>
+    <string name="aborting_connection_fail">Connect abort request failed. Reason code: %d</string>
+    <string name="group_owner_ip">GroupOwner IP: %s</string>
+    <string name="press_back_to_cancel">Press back to cancel</string>
+    <string name="connecting_to_device">Connecting to: %s</string>
+    <string name="gallery">Gallery</string>
+    <string name="slideshow">Slideshow</string>
+    <string name="tools">Tools</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+    <string name="import_to_file">Import</string>
+    <string name="no_peers_found">No peers found</string>
+    <string name="finding_peers">Finding peers</string>
+    <string name="available">Available</string>
+    <string name="invited">Invited</string>
+    <string name="connected">Connected</string>
+    <string name="failed">Failed</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="unknown">Unknown</string>
+    <string name="settings">Settings</string>
+    <string name="notification_title">Intercom</string>
+    <string name="notification_text">Application running in background</string>
+    <string name="disconnected">Disconnnected</string>
+    <string name="connectedwith">Connnected</string>
+    <string name="sample_rate">Sample rate</string>
+    <string name="sample_size">Sample size</string>
+    <string name="mode_audiotrack">Mode Audiotrack</string>
+    <string name="mode_playing">Mode playing</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
